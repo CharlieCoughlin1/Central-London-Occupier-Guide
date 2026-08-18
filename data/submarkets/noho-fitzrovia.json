@@ -1,0 +1,162 @@
+{
+  "title": "Noho / Fitzrovia",
+  "shortTitle": "Noho / Fitzrovia",
+  "period": "Q1 2026 QTD",
+  "heroImage": "../../assets/images/noho-fitzrovia-hero.png",
+  "mapImage": "../../assets/images/noho-fitzrovia-map.png",
+  "heroFacts": [
+    { "label": "Office stock", "value": "11.7m sq ft", "target": 11.7, "decimals": 1, "suffix": "m sq ft" },
+    { "label": "Availability rate", "value": "11.9%", "target": 11.9, "decimals": 1, "suffix": "%" },
+    { "label": "Guiding Grade A rent", "value": "£118 psf", "target": 118, "decimals": 0, "prefix": "£", "suffix": " psf" }
+  ],
+  "overview": [
+    "Fitzrovia sits between Euston Road and Oxford Street. Developed from the Manor of Tottenham Court and urbanised in the 18th century, the district took its modern name from the Fitzroy Tavern in the late 1930s.",
+    "Today it combines offices, homes, retail, education and healthcare. The BT Tower, Charlotte Street and the British Museum are among the landmarks that define the area.",
+    "Its occupier base is led by media and creative businesses, professional services and technology. Major office occupiers include Boston Consulting Group, Meta, Estée Lauder Companies and Arup, while University College London and several hospitals reinforce the district's academic and healthcare presence."
+  ],
+  "developments": {
+    "tracked": 7,
+    "available": 5,
+    "underConstruction": 2,
+    "buildings": [
+      {
+        "id": "princess-house",
+        "name": "Princess House, W1",
+        "status": "Available",
+        "availability": "450–45,374 sq ft",
+        "rent": "£70+ psf",
+        "image": "../../assets/images/development-princess-house.png",
+        "imageAlt": "Princess House on Eastcastle Street",
+        "x": 72.35,
+        "y": 11.177
+      },
+      {
+        "id": "berners-wells",
+        "name": "Berners & Wells, W1",
+        "status": "Available",
+        "availability": "15,892 sq ft",
+        "rent": "£95+ psf",
+        "image": "../../assets/images/development-berners-wells.png",
+        "imageAlt": "Berners & Wells office building",
+        "x": 56.525,
+        "y": 16.638
+      },
+      {
+        "id": "the-ribbon",
+        "name": "The Ribbon, W1",
+        "status": "Under construction / pre-let",
+        "availability": "11,310–80,000 sq ft",
+        "rent": "£110–£150 psf",
+        "image": "../../assets/images/development-the-ribbon.png",
+        "imageAlt": "The Ribbon office development",
+        "x": 63.704,
+        "y": 19.881
+      },
+      {
+        "id": "the-fitzrovia",
+        "name": "The Fitzrovia, W1",
+        "status": "Available",
+        "availability": "10,504–33,206 sq ft",
+        "rent": "£81–£99 psf",
+        "image": "../../assets/images/development-the-fitzrovia.jpg",
+        "imageAlt": "The Fitzrovia office building",
+        "x": 9.543,
+        "y": 31.314
+      },
+      {
+        "id": "2-fitzroy-place",
+        "name": "2 Fitzroy Place, W1",
+        "status": "Available",
+        "availability": "12,867 sq ft",
+        "rent": "£135 psf",
+        "image": "../../assets/images/development-2-fitzroy-place.png",
+        "imageAlt": "2 Fitzroy Place",
+        "x": 65.334,
+        "y": 32.338
+      },
+      {
+        "id": "80-charlotte-street",
+        "name": "80 Charlotte Street, W1",
+        "status": "Available",
+        "availability": "15,870 sq ft",
+        "rent": "£87.50–£180 psf",
+        "image": "../../assets/images/development-80-charlotte-street.png",
+        "imageAlt": "80 Charlotte Street office building",
+        "x": 54.894,
+        "y": 56.4
+      },
+      {
+        "id": "network-building",
+        "name": "Network Building, W1",
+        "status": "Under construction / pre-let",
+        "availability": "17,750–135,000 sq ft",
+        "rent": "£81–£99 psf",
+        "image": "../../assets/images/development-network-building.png",
+        "imageAlt": "Network Building on Howland Street",
+        "x": 27.326,
+        "y": 70.223
+      }
+    ]
+  },
+  "scores": [
+    {
+      "key": "connectivity",
+      "label": "Connectivity score",
+      "score": 50,
+      "metricValue": "4.7m",
+      "metricTarget": 4.7,
+      "metricDecimals": 1,
+      "metricSuffix": "m",
+      "metricLabel": "people reachable within 50 minutes"
+    },
+    {
+      "key": "amenity",
+      "label": "Amenity score",
+      "score": 90,
+      "metricValue": "200+",
+      "metricTarget": 200,
+      "metricDecimals": 0,
+      "metricSuffix": "+",
+      "metricLabel": "food and beverage outlets"
+    },
+    {
+      "key": "culture",
+      "label": "Cultural score",
+      "score": 86,
+      "metricValue": "70+",
+      "metricTarget": 70,
+      "metricDecimals": 0,
+      "metricSuffix": "+",
+      "metricLabel": "culture and nightlife venues"
+    }
+  ],
+  "occupierComposition": [
+    { "sector": "Media & Creative", "share": 20.1 },
+    { "sector": "Professional services", "share": 13.9 },
+    { "sector": "Tech", "share": 12.1 },
+    { "sector": "Public sector & Education", "share": 11.1 },
+    { "sector": "Retail, Hotels & Distribution", "share": 9.4 },
+    { "sector": "Real Estate & Construction", "share": 8.0 }
+  ],
+  "notableOccupiers": [
+    { "name": "Boston Consulting Group", "building": "80 Charlotte Street", "floorSpace": 321000 },
+    { "name": "Meta", "building": "One Rathbone Square", "floorSpace": 242800 },
+    { "name": "Estée Lauder Companies", "building": "1 Fitzroy Place", "floorSpace": 150000 },
+    { "name": "Arup", "building": "8 Fitzroy Street", "floorSpace": 147900 }
+  ],
+  "marketStats": [
+    { "label": "Availability rate", "value": "11.9%", "note": "Available office space as a share of stock" },
+    { "label": "Total office stock", "value": "11.7m sq ft", "note": "Across 721 office buildings" },
+    { "label": "Guiding Grade A rent", "value": "£118 psf", "note": "Best-in-class space" },
+    { "label": "Guiding Grade B rent", "value": "£68 psf", "note": "Good quality space" },
+    { "label": "Under construction", "value": "221,740 sq ft", "note": "District-wide pipeline" }
+  ],
+  "stations": [
+    { "id": "tottenham-court-road", "name": "Tottenham Court Road", "lines": ["Central", "Northern", "Elizabeth"], "x": 3.754, "y": 2.388 },
+    { "id": "goodge-street", "name": "Goodge Street", "lines": ["Northern"], "x": 15.661, "y": 45.564 },
+    { "id": "warren-street", "name": "Warren Street", "lines": ["Northern", "Victoria"], "x": 34.422, "y": 96.586 },
+    { "id": "great-portland-street", "name": "Great Portland Street", "lines": ["Circle", "Hammersmith & City", "Metropolitan"], "x": 84.341, "y": 94.028 },
+    { "id": "oxford-circus", "name": "Oxford Circus", "lines": ["Bakerloo", "Central", "Victoria"], "x": 88.419, "y": 8.531 }
+  ],
+  "sources": "LSH Central London Office MASTER - updated.xlsx; Tenant composition.xlsx; Key office occupiers by submarket.xlsx; CL key office buildings.xlsx; current LSH / Infogram dashboard for mapped locations and imagery."
+}
