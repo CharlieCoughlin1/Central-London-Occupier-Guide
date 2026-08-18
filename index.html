@@ -1,0 +1,3595 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Central London Offices Guide</title>
+    <link rel="stylesheet" href="vendor/maplibre-gl/maplibre-gl.css" />
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/din-pro" />
+    <style>
+      :root{
+        --brand:#CC2030;
+        --grade-a-strong:#cc2030;
+        --grade-b-strong:#00777a;
+        --grade-a-soft:#9f1f34;
+        --grade-b-soft:#4a3a32;
+        --grade-a-soft-hover:#b3253d;
+        --grade-b-soft-hover:#5a463d;
+        --grade-a-tint:#cc2030;
+        --grade-b-tint:#00777a;
+        --grade-a-tint-text:#ffffff;
+        --grade-b-tint-text:#ffffff;
+        --submarket-tint:#F7F8FA;
+        --table-header:#FBFCFD;
+        --submarket-fill:#141c2e;
+        --ink:#0F172A;
+        --muted-ink:#475569;
+        --surface:#FFFFFF;
+        --ui:#F5F6F8;
+        --stroke:#E5E7EB;
+        --water:#A6CDE2;
+        --water-stroke:#7FAECB;
+        --radius-1:6px;
+        --radius-2:8px;
+        --shadow-1:0 4px 12px rgba(0,0,0,.12);
+        --popup-accent: var(--brand);
+        --header-h: 0px;
+        --marquee-h: 0px;
+        --embed-host-offset: 0px;
+        --logo-gap:clamp(6px, 1vw, 10px);
+        --logo-w:clamp(72px, 12vw, 132px);
+        --logo-h:clamp(40px, 6vw, 60px);
+        --logo-img-h:clamp(24px, 4.6vw, 38px);
+        --logo-img-w:clamp(70px, 13vw, 122px);
+        --label-font-size:clamp(0.58rem, 0.42vw + 0.34rem, 0.74rem);
+        --map-stage-min:calc(136vh - var(--header-h) + 100px);
+        --map-height:clamp(980px, calc(140vh - var(--header-h) + 220px), 1460px);
+      }
+
+      html, body { height:100%; }
+      body {
+        margin:0;
+        display:block;
+        background:var(--surface);
+        color:var(--ink);
+        font-family:"DIN Pro","DINPro",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+        overflow:auto;
+        min-height:100vh;
+        transition:background .2s ease;
+      }
+
+      body.is-embedded{
+        font-size:0.94rem;
+        padding-top:var(--embed-host-offset);
+        --logo-gap:clamp(5px, 0.8vw, 8px);
+        --logo-w:clamp(60px, 10vw, 112px);
+        --logo-h:clamp(34px, 5vw, 50px);
+        --logo-img-h:clamp(22px, 4vw, 32px);
+        --logo-img-w:clamp(64px, 11vw, 108px);
+        /* Avoid iframe auto-height feedback loops caused by vh-based map sizing. */
+        --map-stage-min:auto;
+        --map-height:clamp(806px, 88.4vw, 1196px);
+      }
+
+      .skip-link{
+        position:absolute;
+        top:12px;
+        left:12px;
+        padding:10px 14px;
+        background:#fff;
+        color:var(--ink);
+        border-radius:10px;
+        border:1px solid var(--stroke);
+        box-shadow:0 10px 22px rgba(15,23,42,0.12);
+        z-index:20;
+        transform:translateY(-140%);
+        transition:transform .2s ease;
+      }
+      .skip-link:focus{ transform:translateY(0); }
+
+      .welcome-banner{
+        position:relative;
+        z-index:9;
+        padding:14px 18px;
+        background:radial-gradient(circle at 18% 24%, rgba(255,255,255,0.12), transparent 42%),
+                   radial-gradient(circle at 82% 8%, rgba(255,255,255,0.16), transparent 36%),
+                   linear-gradient(115deg, #3D3834 8%, #3D3834 52%, #CC2030 110%);
+        border-bottom:1px solid rgba(255,255,255,0.2);
+        box-shadow:0 10px 24px rgba(12,16,32,0.22);
+        opacity:1;
+        max-height:140px;
+        overflow:hidden;
+        transform:translateY(0);
+        transition:max-height .4s ease, opacity .3s ease, transform .3s ease, padding .3s ease, border-color .3s ease;
+      }
+      .welcome-banner.is-hidden{
+        opacity:0;
+        transform:translateY(-10px);
+        max-height:0;
+        padding-top:0;
+        padding-bottom:0;
+        border-bottom-color:transparent;
+      }
+      .welcome-banner-inner{
+        width:100%;
+        max-width:1280px;
+        margin:0 auto;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        color:#F8FAFC;
+        font-weight:800;
+        letter-spacing:.2px;
+        text-align:center;
+        text-shadow:0 6px 16px rgba(0,0,0,0.22);
+        font-size:clamp(1.35rem, 0.5vw + 1.18rem, 1.82rem);
+        white-space:normal;
+        overflow-wrap:anywhere;
+      }
+
+      /* --- Hero header --- */
+      .site-header{
+        position:sticky;
+        inset:0 0 auto 0;
+        z-index:8;
+        background:radial-gradient(circle at 18% 24%, rgba(255,255,255,0.12), transparent 42%),
+                   radial-gradient(circle at 82% 8%, rgba(255,255,255,0.16), transparent 36%),
+                   linear-gradient(115deg, #3D3834 8%, #3D3834 52%, #CC2030 110%);
+        color:#fff;
+        border-bottom:1px solid rgba(255,255,255,0.18);
+        box-shadow:0 14px 32px rgba(12,16,32,0.25);
+        padding:6px 18px 8px;
+        transition:opacity .2s ease;
+      }
+      body.is-embedded .site-header{ padding:7px 16px 9px; }
+      .hero-shell{ width:100%; max-width:1120px; margin:0 auto; display:grid; grid-template-columns:minmax(0, 1fr) minmax(300px, 420px); gap:clamp(8px, 1.2vw, 18px); align-items:center; }
+      body.is-embedded .hero-shell{ max-width:none; }
+      .hero-copy{ display:flex; flex-direction:column; gap:4px; align-items:flex-start; text-align:left; min-width:0; }
+      .eyebrow{ display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); color:#E8EEF9; padding:6px 10px; border-radius:999px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; font-size:.78rem; width:max-content; box-shadow:0 6px 16px rgba(0,0,0,0.14); }
+      .eyebrow::before{ content:""; width:8px; height:8px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 4px rgba(204,32,48,0.25); }
+      .hero-title{ margin:0; font-size:clamp(1.16rem, 0.84vw + 0.88rem, 1.52rem); line-height:1.12; letter-spacing:.2px; font-weight:900; text-shadow:0 8px 22px rgba(0,0,0,0.25); white-space:normal; overflow-wrap:anywhere; text-wrap:balance; }
+      .hero-lede{ margin:0; max-width:760px; color:#E4E8F1; font-size:clamp(.74rem, 0.24vw + .68rem, .82rem); line-height:1.3; white-space:normal; overflow-wrap:anywhere; }
+      body.is-embedded .hero-title{ font-size:clamp(1.5rem, 1.6vw + 1.1rem, 2.1rem); }
+      body.is-embedded .hero-lede{ font-size:.98rem; line-height:1.5; }
+      .cta-row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; justify-content:flex-start; }
+      .cta-row .btn{ border-radius:10px; }
+      .cta-row .btn.is-active{ box-shadow:0 12px 28px rgba(204,32,48,0.28); transform:none; }
+      .btn{ appearance:none; border:none; cursor:pointer; font-weight:800; letter-spacing:.3px; border-radius:12px; padding:12px 16px; font-size:.95rem; transition:transform .12s ease, box-shadow .16s ease, background .16s ease, color .16s ease; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+      .btn:active{ transform:translateY(1px); }
+      .btn-primary{ background:linear-gradient(135deg, #FF4356, var(--brand)); color:#fff; box-shadow:0 12px 28px rgba(204,32,48,0.35); border:1px solid rgba(255,255,255,0.24); }
+      .btn-primary:hover{ box-shadow:0 14px 36px rgba(204,32,48,0.45); }
+      .btn-ghost{ background:rgba(255,255,255,0.08); color:#E8EEF9; border:1px solid rgba(255,255,255,0.22); }
+      .btn-ghost:hover{ background:rgba(255,255,255,0.12); }
+      .btn-toggle{ background:rgba(255,255,255,0.12); color:#E8EEF9; border:1px solid rgba(255,255,255,0.28); }
+      .btn-toggle:not(.is-active){ box-shadow:none; }
+      .btn-toggle.is-active{ background:var(--brand); color:#fff; border-color:rgba(255,255,255,0.3); box-shadow:0 14px 32px rgba(204,32,48,0.4); }
+      .btn-toggle:not(.is-active):hover{ background:rgba(255,255,255,0.18); }
+      .hero-meta{ display:flex; flex-wrap:wrap; gap:10px; margin-top:2px; justify-content:flex-start; }
+      .meta-chip{ background:rgba(255,255,255,0.08); color:#E4E8F1; border:1px solid rgba(255,255,255,0.2); border-radius:10px; padding:10px 12px; font-weight:800; letter-spacing:.2px; display:flex; align-items:center; gap:8px; box-shadow:0 10px 22px rgba(0,0,0,0.16); }
+      .meta-chip strong{ color:#fff; font-size:1.05rem; }
+      .meta-chip .chip-dot{ width:9px; height:9px; border-radius:50%; background:var(--brand); box-shadow:0 0 0 4px rgba(204,32,48,0.25); }
+      .hero-visual{ position:relative; display:grid; gap:8px; align-content:center; justify-items:end; min-width:0; }
+      .stat-card{ background:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.18); border-radius:14px; padding:8px 10px; width:min(100%, 390px); max-width:100%; color:#F7F9FD; box-shadow:0 12px 28px rgba(0,0,0,0.22); backdrop-filter:saturate(130%) blur(6px); box-sizing:border-box; }
+      body.is-embedded .stat-card{ width:min(100%, 390px); max-width:100%; padding:8px 10px; }
+      .stat-card h3{ margin:0 0 4px; font-size:.8rem; letter-spacing:.28px; text-transform:uppercase; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+      .stat-card .stat-value{ font-size:clamp(1.15rem, 0.85vw + 0.9rem, 1.35rem); font-weight:900; display:block; letter-spacing:.35px; line-height:1.15; }
+      .stat-card small{ display:block; color:#E4E8F1; opacity:.82; line-height:1.25; }
+      .stat-subtext{ font-size:.78rem; opacity:.85; }
+      .headline-rotator{ display:grid; gap:4px; transition:opacity .45s ease, transform .45s ease; transform:translateY(0); opacity:1; }
+      .headline-rotator.is-transitioning{ opacity:0; transform:translateY(8px); }
+      .stat-stack{ display:grid; gap:8px; }
+      .live-dot{
+        width:9px;
+        height:9px;
+        border-radius:50%;
+        background:var(--brand);
+        box-shadow:0 0 0 0 rgba(204,32,48,0.45);
+        display:inline-block;
+        animation:pulse-dot 1.8s ease-in-out infinite;
+      }
+      @keyframes pulse-dot{
+        0%{ box-shadow:0 0 0 0 rgba(204,32,48,0.45); }
+        70%{ box-shadow:0 0 0 10px rgba(204,32,48,0); }
+        100%{ box-shadow:0 0 0 0 rgba(204,32,48,0); }
+      }
+      .glow-ring{ position:absolute; inset:-22% -8% -32% auto; width:240px; height:240px; background:radial-gradient(circle, rgba(255,86,102,0.32), rgba(204,32,48,0)); filter:blur(16px); opacity:.8; pointer-events:none; }
+
+      .map-stage{
+        position:relative;
+        min-height:var(--map-stage-min);
+        background:#fff;
+        margin-top:-78px;
+        overflow:hidden;
+      }
+      body.is-embedded .map-stage{ min-height:var(--map-stage-min); margin-top:-78px; }
+
+      .map-status{
+        position:absolute;
+        top:16px;
+        right:16px;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        padding:10px 12px;
+        background:rgba(255,255,255,0.94);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        box-shadow:0 12px 28px rgba(15,23,42,0.12);
+        font-size:.88rem;
+        color:var(--ink);
+        z-index:5;
+      }
+      .map-status.is-hidden{ display:none; }
+      .map-status .spinner{
+        width:14px;
+        height:14px;
+        border-radius:50%;
+        border:2px solid rgba(15,23,42,0.15);
+        border-top-color:var(--brand);
+        animation:spin 1s linear infinite;
+      }
+      .map-status-btn{
+        border:none;
+        background:var(--brand);
+        color:#fff;
+        padding:6px 10px;
+        border-radius:999px;
+        font-weight:700;
+        cursor:pointer;
+        box-shadow:0 8px 18px rgba(204,32,48,0.22);
+      }
+      .map-status.is-loading .map-status-btn{ display:none; }
+      .map-status.is-error .spinner{ display:none; }
+
+      @keyframes spin{
+        to{ transform:rotate(360deg); }
+      }
+
+      .map-ui{
+        position:absolute;
+        top:10px;
+        right:10px;
+        display:flex;
+        flex-direction:column;
+        gap:8px;
+        z-index:6;
+      }
+      .map-ui-btn{
+        border:1px solid var(--stroke);
+        background:#fff;
+        color:var(--ink);
+        padding:8px 12px;
+        border-radius:10px;
+        font-weight:800;
+        font-size:.85rem;
+        cursor:pointer;
+        box-shadow:0 10px 20px rgba(15,23,42,0.12);
+      }
+      body.is-desktop .map-ui [data-map-action="toggle-interactions"]{ display:none; }
+
+      #map{
+        position:sticky;
+        top:0;
+        left:0;
+        right:0;
+        width:100%;
+        margin-left:0;
+        height:var(--map-height);
+        min-height:858px;
+        background:#fff;
+        padding-bottom:env(safe-area-inset-bottom);
+        box-sizing:border-box;
+      }
+      body.is-embedded #map{ height:var(--map-height); min-height:806px; }
+
+      body.map-expanded #map{
+        height:var(--map-height);
+        min-height:858px;
+      }
+      body.is-embedded.map-expanded #map{ height:var(--map-height); min-height:806px; }
+
+      .polygon-label{
+        pointer-events:none;
+        display:inline-block;
+        padding:5px 9px;
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:rgba(255,255,255,0.92);
+        box-shadow:0 12px 32px rgba(15,23,42,0.16);
+        color:var(--ink);
+        font-family:"DIN Pro","DINPro",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+        font-weight:800;
+        font-size:var(--label-font-size);
+        letter-spacing:.28px;
+        text-transform:uppercase;
+        text-align:center;
+        max-width:150px;
+        line-height:1.28;
+        white-space:normal;
+        word-break:break-word;
+        transform:translate3d(0,0,0);
+        transform-origin:center;
+        transform:translate3d(0,0,0) scale(var(--label-scale, 1));
+        backdrop-filter:saturate(120%) blur(2px);
+      }
+
+      /* PSF note */
+      .psf-control{
+        position:absolute;
+        bottom:calc(var(--marquee-h) + 12px);
+        right:16px;
+        background:rgba(255,255,255,.8);
+        border:1px solid var(--stroke);
+        border-radius:var(--radius-1);
+        padding:4px 8px;
+        font-size:.7rem;
+        color:var(--muted-ink);
+        z-index:3;
+        white-space:nowrap;
+        display:inline-flex;
+        align-items:center;
+      }
+
+      /* Hide table + labels in non-desktop views */
+      body:not(.is-desktop) .psf-control,
+      body:not(.is-desktop) .polygon-label{
+        display:none !important;
+      }
+
+      .data-view{
+        position:relative;
+        inset:auto;
+        width:100%;
+        background:linear-gradient(180deg, rgba(248,250,252,0.95), rgba(248,250,252,0.98));
+        z-index:1;
+        padding:32px 10px calc(48px + env(safe-area-inset-bottom));
+        display:flex;
+        justify-content:stretch;
+        overflow:visible;
+        box-sizing:border-box;
+      }
+      body.is-embedded .data-view{
+        padding:24px 14px calc(36px + env(safe-area-inset-bottom));
+      }
+      .table-panel{
+        position:relative;
+        width:100%;
+        max-width:none;
+        height:auto;
+        background:#FFFFFF;
+        border:1px solid var(--stroke);
+        border-radius:14px;
+        box-shadow:0 16px 30px rgba(15,23,42,0.16);
+        overflow:hidden;
+        display:flex;
+        flex-direction:column;
+      }
+      .table-panel .panel-accent{
+        height:3px;
+        background:var(--brand);
+        box-shadow:0 10px 24px rgba(204,32,48,0.25);
+      }
+      .panel-header{
+        display:flex; align-items:flex-start; justify-content:space-between;
+        gap:12px;
+        padding:16px 16px 8px;
+        background:#FFFFFF;
+        border-bottom:1px solid var(--stroke);
+      }
+      .panel-title-group{ display:flex; flex-direction:column; gap:6px; }
+      .panel-title{
+        margin:0;
+        font-weight:900;
+        letter-spacing:.35px;
+        text-transform:uppercase;
+        font-size:1.4rem;
+        color:var(--ink);
+      }
+      body.is-embedded .panel-title{ font-size:1.2rem; }
+      .panel-subtitle{
+        margin:0;
+        color:var(--muted-ink);
+        font-size:.9rem;
+        letter-spacing:.1px;
+      }
+      .table-meta{
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        padding:10px 16px 12px;
+        border-bottom:1px solid var(--stroke);
+        background:#FFFFFF;
+      }
+      .table-meta .legend{ display:flex; gap:8px; flex-wrap:wrap; }
+      .chip{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        padding:8px 10px;
+        border-radius:12px;
+        font-weight:800;
+        letter-spacing:.12px;
+        font-size:.9rem;
+        background:#fff;
+        border:1px solid var(--stroke);
+        color:var(--muted-ink);
+        box-shadow:0 10px 18px rgba(15,23,42,0.08);
+      }
+      .chip-dot{ width:9px; height:9px; border-radius:50%; }
+      .chip-grade-a{ border-color:rgba(199,42,59,0.26); background:#f7eff1; color:#7f1c2a; }
+      .chip-grade-a .chip-dot{ background:var(--grade-a-strong); box-shadow:0 0 0 4px rgba(199,42,59,0.14); }
+      .chip-grade-b{ border-color:rgba(67,60,54,0.18); background:#f3f0ec; color:#3f3731; }
+      .chip-grade-b .chip-dot{ background:var(--grade-b-strong); box-shadow:0 0 0 4px rgba(67,60,54,0.12); }
+      .meta-note{ margin:0; color:var(--muted-ink); font-size:.72rem; line-height:1.2; }
+
+      .mobile-browser-notice{
+        display:none;
+        align-items:flex-start;
+        gap:10px;
+        margin:12px 16px 0;
+        padding:12px 14px;
+        border:1px solid rgba(204,32,48,0.24);
+        border-radius:12px;
+        background:#FFF7F8;
+        color:var(--ink);
+        box-shadow:0 8px 18px rgba(15,23,42,0.08);
+      }
+      .mobile-browser-notice-icon{
+        display:grid;
+        place-items:center;
+        flex:0 0 30px;
+        width:30px;
+        height:30px;
+        border-radius:9px;
+        background:var(--brand);
+        color:#fff;
+        font-size:1rem;
+        font-weight:900;
+      }
+      .mobile-browser-notice-copy{ display:grid; gap:3px; min-width:0; }
+      .mobile-browser-notice-title{ font-size:.88rem; line-height:1.2; }
+      .mobile-browser-notice-text{ margin:0; color:var(--muted-ink); font-size:.78rem; line-height:1.35; }
+
+      .browser-help-overlay{
+        position:fixed;
+        inset:0;
+        z-index:100;
+        display:grid;
+        place-items:center;
+        padding:18px;
+        background:rgba(15,23,42,0.72);
+        box-sizing:border-box;
+      }
+      .browser-help-overlay[hidden]{ display:none; }
+      .browser-help-dialog{
+        width:min(100%, 420px);
+        padding:20px;
+        border-radius:18px;
+        border:1px solid rgba(255,255,255,0.22);
+        background:#fff;
+        color:var(--ink);
+        box-shadow:0 24px 60px rgba(0,0,0,0.32);
+        box-sizing:border-box;
+      }
+      .browser-help-dialog h2{ margin:0 0 8px; font-size:1.25rem; line-height:1.2; }
+      .browser-help-dialog > p{ margin:0 0 14px; color:var(--muted-ink); line-height:1.4; }
+      .browser-help-steps{ margin:0 0 18px; padding-left:22px; color:var(--ink); line-height:1.45; }
+      .browser-help-steps li + li{ margin-top:6px; }
+      .browser-help-close{
+        width:100%;
+        min-height:46px;
+        border:0;
+        border-radius:12px;
+        background:var(--brand);
+        color:#fff;
+        font:inherit;
+        font-weight:900;
+        cursor:pointer;
+      }
+      body.browser-help-open{ overflow:hidden; }
+      .dashboard-link-cta{ display:none; }
+
+      .table-search{
+        display:flex;
+        align-items:center;
+        gap:10px;
+        margin-left:auto;
+        position:relative;
+      }
+      .table-search input{
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        padding:8px 10px;
+        font-size:.9rem;
+        min-width:200px;
+        background:#fff;
+        color:var(--ink);
+      }
+      .table-search-combobox{
+        position:relative;
+        min-width:240px;
+      }
+      .table-search-combobox input{
+        width:100%;
+        padding:9px 44px 9px 12px;
+        transition:border-color .14s ease, box-shadow .14s ease;
+        border-radius:12px;
+      }
+      .table-search-combobox input:focus{
+        outline:none;
+        border-color:rgba(204,32,48,0.45);
+        box-shadow:0 0 0 3px rgba(204,32,48,0.12);
+      }
+      .combobox-toggle{
+        position:absolute;
+        right:6px;
+        top:50%;
+        transform:translateY(-50%);
+        border:1px solid rgba(148,163,184,0.35);
+        background:#F1F5F9;
+        color:var(--muted-ink);
+        width:28px;
+        height:28px;
+        border-radius:9px;
+        cursor:pointer;
+        display:grid;
+        place-items:center;
+        font-size:.85rem;
+        line-height:1;
+        padding:0;
+        transition:background .12s ease, color .12s ease, border-color .12s ease;
+      }
+      .combobox-toggle:hover{ background:#E2E8F0; color:var(--ink); border-color:rgba(100,116,139,0.45); }
+      .table-search.is-open .combobox-toggle{ color:var(--ink); }
+      .table-search-dropdown{
+        position:absolute;
+        left:0;
+        right:0;
+        top:calc(100% + 6px);
+        border:1px solid var(--stroke);
+        border-radius:12px;
+        background:#fff;
+        box-shadow:0 16px 30px rgba(15,23,42,0.16);
+        max-height:220px;
+        overflow:auto;
+        z-index:12;
+        padding:8px;
+      }
+      .table-search-dropdown[hidden]{ display:none; }
+      .table-search-option{
+        width:100%;
+        border:1px solid #E2E8F0;
+        background:#F8FAFC;
+        text-align:left;
+        border-radius:10px;
+        padding:10px 12px;
+        font-size:.89rem;
+        font-weight:700;
+        color:#334155;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:10px;
+        margin-bottom:6px;
+        transition:background .12s ease, border-color .12s ease, color .12s ease, box-shadow .12s ease;
+      }
+      .table-search-option:last-child{ margin-bottom:0; }
+      .table-search-option-label{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+      .table-search-option-tag{
+        display:none;
+        flex-shrink:0;
+        border-radius:999px;
+        padding:2px 8px;
+        font-size:.68rem;
+        letter-spacing:.2px;
+        font-weight:800;
+        text-transform:uppercase;
+      }
+      .table-search-option:hover,
+      .table-search-option.is-active,
+      .table-search-option.is-selected{
+        background:#FFF4F5;
+        border-color:rgba(204,32,48,0.38);
+        color:#8A1122;
+        box-shadow:0 6px 14px rgba(204,32,48,0.12);
+      }
+      .table-search-option.is-selected .table-search-option-tag{
+        display:inline-flex;
+        align-items:center;
+        background:#CC2030;
+        color:#fff;
+      }
+      .table-search-option-empty{
+        margin:0;
+        padding:8px 10px;
+        font-size:.85rem;
+        color:var(--muted-ink);
+      }
+      .table-search button{
+        border:none;
+        background:rgba(15,23,42,0.08);
+        color:var(--muted-ink);
+        padding:6px 10px;
+        border-radius:10px;
+        font-weight:800;
+        cursor:pointer;
+      }
+      .table-search button:disabled{
+        opacity:.5;
+        cursor:default;
+      }
+
+      .table-scroller{
+        overflow:auto;
+        flex:1;
+        border-top:1px solid var(--stroke);
+        background:#FFFFFF;
+        min-height:0;
+        position:relative;
+      }
+
+      .rent-table{
+        width:100%;
+        border-collapse:separate;
+        border-spacing:0;
+        font-variant-numeric:tabular-nums;
+        table-layout:fixed;
+      }
+
+      .rent-table col.col-submarket{ width:24%; min-width:230px; }
+      .rent-table col.col-prime{ width:13%; min-width:110px; }
+      .rent-table col.col-total{ width:15%; min-width:130px; }
+      .rent-table col.col-change{ width:10%; min-width:100px; }
+
+      .sort-button{
+        appearance:none;
+        background:none;
+        border:none;
+        padding:0;
+        color:inherit;
+        font:inherit;
+        font-weight:800;
+        display:inline-flex;
+        flex-direction:column;
+        align-items:center;
+        gap:2px;
+        cursor:pointer;
+        text-align:center;
+      }
+      .sort-button .sort-title{ font-weight:900; letter-spacing:.12px; }
+      .sort-button .sort-subtitle{ font-weight:700; color:var(--muted-ink); font-size:.9rem; }
+      .sort-button .sort-indicator{
+        font-size:.8rem;
+        color:var(--muted-ink);
+        opacity:.7;
+        transition:opacity .12s ease, transform .12s ease;
+        align-self:center;
+      }
+      .sort-button:hover .sort-indicator{ opacity:1; transform:translateY(-2px); }
+      .sort-button[aria-sort="ascending"],
+      .sort-button[aria-sort="descending"]{
+        color:var(--ink);
+      }
+      .rent-table thead th{
+        position:sticky;
+        top:0;
+        z-index:1;
+        background:var(--table-header);
+        color:var(--ink);
+        text-align:center;
+        font-weight:800;
+        padding:14px 16px 12px;
+        border-bottom:1px solid var(--stroke);
+        letter-spacing:.2px;
+        box-shadow:inset 0 -1px 0 rgba(15,23,42,0.04);
+        transition:background .15s ease, color .15s ease;
+      }
+      .rent-table thead tr.group-row th{
+        top:0;
+        z-index:3;
+        padding:10px 16px 6px;
+        font-size:1rem;
+        text-transform:uppercase;
+        letter-spacing:.4px;
+        background:var(--table-header);
+      }
+      .rent-table thead tr.group-row th.col-grade-a{
+        background:var(--grade-a-tint);
+        color:var(--grade-a-tint-text);
+      }
+      .rent-table thead tr.group-row th.col-grade-b{
+        background:var(--grade-b-tint);
+        color:var(--grade-b-tint-text);
+      }
+      .rent-table thead tr.detail-row th{
+        top:34px;
+        z-index:2;
+        padding:12px 16px 10px;
+      }
+      .rent-table thead tr.detail-row th.col-grade-a{
+        background:var(--grade-a-tint);
+        color:var(--grade-a-tint-text);
+      }
+      .rent-table thead tr.detail-row th.col-grade-b{
+        background:var(--grade-b-tint);
+        color:var(--grade-b-tint-text);
+      }
+      .rent-table thead tr.detail-row th.col-grade-a:last-of-type{
+        border-right:none;
+      }
+      .rent-table thead tr.detail-row th.col-grade-b:first-of-type{
+        border-left:none;
+      }
+      .rent-table thead th.submarket-head{
+        vertical-align:middle;
+        text-align:left;
+      }
+      .rent-table thead th.grade-group{
+        text-align:center;
+      }
+      .rent-table thead th[aria-sort="ascending"],
+      .rent-table thead th[aria-sort="descending"]{
+        background:inherit;
+        color:inherit;
+      }
+      .rent-table thead .sort-title{ color:var(--ink); white-space:normal; line-height:1.1; }
+      .rent-table thead th.col-grade-a .sort-title{ color:var(--grade-a-tint-text); }
+      .rent-table thead th.col-grade-b .sort-title{ color:var(--grade-b-tint-text); }
+      .rent-table thead .sort-subtitle{
+        color:var(--muted-ink);
+        font-weight:600;
+        font-size:.86rem;
+        white-space:normal;
+        line-height:1.2;
+      }
+      .rent-table thead th.col-grade-a .sort-subtitle{ color:rgba(255,255,255,0.82); }
+      .rent-table thead th.col-grade-b .sort-subtitle{ color:rgba(255,255,255,0.82); }
+      .rent-table thead .sort-indicator{ color:var(--muted-ink); }
+      .rent-table thead th.col-grade-a .sort-indicator,
+      .rent-table thead th.col-grade-b .sort-indicator{ color:rgba(255,255,255,0.78); }
+      .rent-table tbody td{
+        padding:12px 16px;
+        border-bottom:1px solid #EEF0F3;
+        text-align:center;
+        transition:background .12s ease, box-shadow .12s ease;
+        color:var(--ink);
+      }
+      .rent-table tbody td.numeric{ text-align:center; font-weight:600; color:var(--ink); font-size:.95rem; }
+      .rent-table tbody td.col-grade-a{ background:var(--grade-a-tint); color:var(--grade-a-tint-text); }
+      .rent-table tbody td.col-grade-b{ background:var(--grade-b-tint); color:var(--grade-b-tint-text); }
+      .rent-table tbody td.col-grade-a:last-of-type{ border-right:none; }
+      .rent-table tbody td:nth-child(5){ border-left:none; }
+      .rent-table tbody td:first-child{ font-weight:900; color:var(--ink); letter-spacing:.1px; text-align:left; white-space:nowrap; background:var(--submarket-tint); }
+      .rent-table thead th:first-child{ width:24%; min-width:230px; }
+      .rent-table tbody tr:nth-child(even) td:not(.col-grade-a):not(.col-grade-b):not(:first-child){ background:#FBFCFD; }
+      .rent-table tbody tr:hover td{ background:#F5F6F8; }
+      .rent-table tbody tr:hover td.col-grade-a{ background:#a61927; }
+      .rent-table tbody tr:hover td.col-grade-b{ background:#005c5e; }
+      .rent-table tbody tr:hover td:first-child{ background:#E9EBEF; }
+      .rent-table tbody tr.empty-row td{
+        text-align:center;
+        background:transparent;
+      }
+      .rent-table tbody td.heat-cell{
+        position:relative;
+        font-weight:700;
+        font-size:.95rem;
+        color:var(--ink);
+        background:var(--heat-bg, transparent);
+        transition:background .12s ease, box-shadow .12s ease, filter .12s ease;
+      }
+      .rent-table tbody tr:hover td.heat-cell{ filter:brightness(0.96); }
+      .rent-table tbody td .pill-note{ display:inline-block; margin-left:6px; padding:4px 6px; border-radius:10px; font-size:.78rem; color:var(--muted-ink); background:rgba(15,23,42,0.05); font-weight:700; }
+      .rent-table a{
+        font-weight:700;
+        color:var(--ink);
+        text-decoration:none;
+      }
+      .rent-table a:hover{ text-decoration:underline; text-decoration-color:var(--brand); }
+      .rent-table .no-link{
+        color:var(--muted-ink);
+        font-weight:700;
+        cursor:default;
+      }
+      .row-label-inner{
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+        flex-wrap:wrap;
+        justify-content:flex-start;
+      }
+      .empty-cell{
+        text-align:center;
+        color:var(--muted-ink);
+        font-weight:800;
+        padding:20px 12px;
+      }
+
+      /* Responsive, card-like table layout */
+      @media (max-width: 1080px){
+        .data-view{ padding:26px 12px calc(36px + env(safe-area-inset-bottom)); background:radial-gradient(circle at 8% 12%, rgba(204,32,48,0.08), transparent 30%), linear-gradient(180deg, #F8FAFC 0%, #EEF2F7 100%); }
+        .table-panel{ box-shadow:0 18px 30px rgba(15,23,42,0.14); width:100%; border-radius:18px; overflow:hidden; }
+        .panel-header{ flex-direction:column; align-items:flex-start; gap:6px; padding:18px 18px 12px; }
+        .table-meta{ flex-direction:column; align-items:flex-start; gap:8px; padding:12px 18px 14px; }
+        .table-meta .legend{ width:100%; justify-content:flex-start; }
+        .table-meta .meta-note{ font-size:.72rem; }
+        .table-search{ width:100%; justify-content:flex-start; flex-wrap:wrap; }
+        .table-search input{ min-width:min(100%, 320px); }
+        .table-scroller{ background:linear-gradient(180deg, #FFFFFF 0%, #F5F7FB 60%, #EEF1F6 100%); padding:8px 6px 16px; }
+        .rent-table{ border-collapse:separate; display:block; width:100%; }
+        .rent-table colgroup{ display:none; }
+        .rent-table thead{ display:none; }
+        .rent-table caption{ padding:10px 12px; text-align:left; color:var(--muted-ink); }
+        .rent-table tbody{ display:flex; flex-direction:column; gap:14px; padding:8px 8px 4px; width:100%; }
+        .rent-table tbody tr{
+          display:flex;
+          flex-wrap:wrap;
+          align-items:stretch;
+          gap:10px;
+          border:1px solid var(--stroke);
+          border-radius:14px;
+          background:#FFFFFF;
+          box-shadow:0 12px 22px rgba(15,23,42,0.1);
+          overflow:hidden;
+          padding:10px;
+        }
+        .rent-table tbody td{
+          text-align:left;
+          border-bottom:none;
+          padding:10px 12px;
+          display:flex;
+          flex-direction:column;
+          align-items:flex-start;
+          gap:6px;
+          background:#F8FAFC;
+          border:1px solid rgba(148,163,184,0.25);
+          border-radius:12px;
+          box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
+          box-sizing:border-box;
+          width:fit-content;
+          min-width:clamp(180px, 24vw, 220px);
+          max-width:100%;
+          flex:0 1 auto;
+          overflow-wrap:anywhere;
+        }
+        .rent-table tbody td:first-child{
+          flex:1 1 100%;
+          width:100%;
+          white-space:normal;
+        }
+        .rent-table tbody td.numeric{ text-align:left; font-weight:700; color:var(--ink); }
+        .rent-table tbody td.col-grade-a{ background:var(--grade-a-tint); border-color:rgba(148,163,184,0.35); box-shadow:none; color:var(--grade-a-tint-text); }
+        .rent-table tbody td.col-grade-b{ background:var(--grade-b-tint); border-color:rgba(148,163,184,0.32); box-shadow:none; color:var(--grade-b-tint-text); }
+        .rent-table tbody td::before{
+          content:attr(data-title);
+          font-size:.78rem;
+          text-transform:uppercase;
+          letter-spacing:.35px;
+          color:var(--muted-ink);
+          font-weight:800;
+          opacity:.95;
+          line-height:1.25;
+        }
+        .rent-table tbody td.col-grade-a::before,
+        .rent-table tbody td.col-grade-b::before{
+          color:rgba(255,255,255,0.96);
+          opacity:1;
+        }
+        .rent-table tbody td:first-child{
+          display:block;
+          padding:10px 12px;
+          font-size:1.08rem;
+          background:var(--submarket-tint);
+          border:1px solid rgba(148,163,184,0.3);
+          box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
+          color:var(--ink);
+        }
+        .rent-table tbody td:first-child::before{ display:block; margin-bottom:5px; color:var(--muted-ink); letter-spacing:.44px; }
+        .rent-table tbody tr:hover td{ background:#F5F6F8; }
+        .rent-table tbody tr:hover td.col-grade-a{ background:#a61927; }
+        .rent-table tbody tr:hover td.col-grade-b{ background:#005c5e; }
+        .rent-table tbody td a,
+        .rent-table tbody td .no-link{ overflow-wrap:anywhere; }
+        .rent-table tbody tr.empty-row{
+          display:block;
+          padding:6px;
+          background:transparent;
+          box-shadow:none;
+          border:none;
+        }
+        .rent-table tbody tr.empty-row td{
+          border:none;
+          background:transparent;
+          box-shadow:none;
+          padding:14px 10px;
+        }
+      }
+
+      @media (max-width: 900px){
+        .rent-table tbody td{ min-width:165px; }
+      }
+
+      @media (max-width: 560px){
+        .rent-table tbody tr{
+          display:grid;
+          grid-template-columns:minmax(0, 1fr) minmax(0, 1fr);
+          padding:10px;
+          gap:0;
+        }
+        .rent-table tbody td{
+          width:auto;
+          min-width:0;
+          max-width:none;
+          display:flex;
+          flex-direction:column;
+          justify-content:flex-start;
+          align-items:flex-start;
+          gap:4px;
+          padding:10px;
+          border:0;
+          border-bottom:1px solid rgba(148,163,184,0.25);
+          border-radius:0;
+          box-shadow:none;
+        }
+        .rent-table tbody td::before{
+          font-size:.68rem;
+          color:var(--muted-ink);
+          flex:0 0 auto;
+        }
+        .rent-table tbody td:first-child{
+          display:block;
+          grid-column:1 / -1;
+          grid-row:1;
+          font-size:1rem;
+          background:#fff;
+          border:0;
+          padding:0 0 10px;
+        }
+        .rent-table tbody td:first-child::before{
+          display:block;
+          margin-bottom:4px;
+        }
+        .rent-table tbody td:nth-child(2){ grid-column:1; grid-row:2; }
+        .rent-table tbody td:nth-child(5){ grid-column:2; grid-row:2; }
+        .rent-table tbody td:nth-child(3){ grid-column:1; grid-row:3; }
+        .rent-table tbody td:nth-child(6){ grid-column:2; grid-row:3; }
+        .rent-table tbody td:nth-child(4){ grid-column:1; grid-row:4; border-bottom:0; }
+        .rent-table tbody td:nth-child(7){ grid-column:2; grid-row:4; border-bottom:0; }
+        .rent-table tbody td:nth-child(2),
+        .rent-table tbody td:nth-child(3),
+        .rent-table tbody td:nth-child(4){ border-right:1px solid rgba(148,163,184,0.22); }
+        .rent-table tbody td.numeric{ font-weight:700; color:var(--ink); }
+        .rent-table tbody td:first-child .row-label-inner a,
+        .rent-table tbody td:first-child .row-label-inner .no-link{
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:10px;
+          width:100%;
+          min-height:36px;
+          padding:8px 12px;
+          border-radius:10px;
+          border:1px solid rgba(204,32,48,0.38);
+          background:rgba(204,32,48,0.08);
+          font-weight:800;
+          color:var(--brand);
+          text-decoration:none;
+          box-sizing:border-box;
+        }
+        .rent-table tbody td:first-child .row-label-inner a:active{
+          background:rgba(204,32,48,0.16);
+        }
+        .rent-table tbody td.col-grade-a,
+        .rent-table tbody td.heat-cell{
+          background:#FFF6F7;
+          color:var(--ink);
+        }
+        .rent-table tbody td.col-grade-b{ background:#F2FBFB; color:var(--ink); }
+        .rent-table tbody td.col-grade-a::before,
+        .rent-table tbody td.col-grade-b::before{
+          color:var(--muted-ink);
+          opacity:.95;
+        }
+        .rent-table tbody tr:hover td{ background:#fff; }
+        .rent-table tbody tr:hover td.col-grade-a{ background:#FFF6F7; }
+        .rent-table tbody tr:hover td.col-grade-b{ background:#F2FBFB; }
+        .dashboard-link-cta{
+          display:inline-flex;
+          flex:0 0 auto;
+          font-size:.7rem;
+          color:#fff;
+          background:var(--brand);
+          border-radius:999px;
+          padding:5px 8px;
+          white-space:nowrap;
+        }
+      }
+
+      @media (max-width: 380px){
+        .rent-table tbody td{ padding:9px 8px; }
+        .dashboard-link-cta{ font-size:.66rem; padding:5px 7px; }
+      }
+
+      /* --- Client logo banner (outside #map, fixed to viewport) --- */
+      .logo-marquee{
+        position:relative;
+        inset:auto;
+        width:100%;
+        z-index:5; /* Below PSF note (z:3) & table UI (z:6); above the map */
+        background:transparent;
+        border:none;
+        border-radius:0;
+        box-shadow:none;
+        pointer-events:none; /* never block map interactions */
+        backdrop-filter:none;
+        padding:0 8px 8px;
+        margin:-140px 0 0;
+        display:flex;
+        justify-content:center;
+        opacity:0;
+        transform:translateY(8px);
+        transition:opacity .25s ease, transform .25s ease;
+        max-width:none;
+        box-sizing:border-box;
+      }
+      .logo-marquee.is-ready{ opacity:1; transform:translateY(0); }
+      .logo-marquee.is-empty{ display:none; }
+      .logo-marquee .logo-accent{ display:none; }
+      .logo-banner-inner{ padding:10px 16px; width:100%; margin:0; background:linear-gradient(125deg, #CC2030 6%, #B81E2D 46%, #9E1824 100%); border-radius:16px; box-shadow:0 14px 32px rgba(12,16,32,0.26); border:1px solid rgba(255,255,255,0.14); color:#fff; display:flex; flex-direction:column; gap:8px; box-sizing:border-box; }
+      body.is-embedded .logo-banner-inner{ padding:8px 14px; }
+      .banner-subtitle{
+        margin:0 0 2px;
+        text-align:left;
+        color:#F9FAFB;
+        font-weight:900;
+        letter-spacing:.38px;
+        text-transform:uppercase;
+        font-size:.95rem;
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        text-shadow:0 8px 20px rgba(0,0,0,0.28);
+      }
+      .banner-subtitle::before{
+        display:none;
+      }
+      .logo-viewport{
+        position:relative;
+        overflow:hidden;
+        padding:8px 10px;
+        border-radius:14px;
+        background:var(--brand);
+        border:1px solid rgba(255,255,255,0.18);
+        box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06), 0 12px 26px rgba(12,16,32,0.28);
+      }
+      .logo-viewport::before,
+      .logo-viewport::after{
+        content:"";
+        position:absolute;
+        top:0; bottom:0;
+        width:46px;
+        pointer-events:none;
+        z-index:1;
+        background:linear-gradient(90deg, rgba(204,32,48,1), rgba(204,32,48,0));
+      }
+      .logo-viewport::before{ left:0; }
+      .logo-viewport::after{ right:0; transform:scaleX(-1); }
+      .logo-track{
+        display:flex;
+        align-items:center;
+        width:max-content; /* content defines natural width */
+        will-change:transform;
+        animation: marquee-ltr 52s linear infinite; /* left-to-right */
+        gap:var(--logo-gap);
+        padding:0 12px;
+      }
+      /* Left-to-right continuous loop: render two identical strips (A + B). */
+      @keyframes marquee-ltr{
+        0%   { transform: translateX(-50%); }
+        100% { transform: translateX(0%); }
+      }
+      .logo-strip{
+        display:flex;
+        align-items:center;
+        gap:var(--logo-gap);
+        list-style:none;
+        margin:0;
+        padding:2px 6px;
+        flex:0 0 auto;
+      }
+      .logo-strip li{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex:0 0 auto;
+        width:var(--logo-w);
+        height:var(--logo-h);
+        padding:5px 6px;
+        border-radius:12px;
+        background:#3f4040;
+        border:1px solid rgba(255,255,255,0.16);
+        box-shadow:0 10px 24px rgba(0,0,0,0.22), inset 0 0 0 1px rgba(255,255,255,0.06);
+      }
+      .logo-strip img{
+        display:block;
+        height:var(--logo-img-h);
+        max-width:var(--logo-img-w);
+        object-fit:contain;
+        opacity:.98;
+        filter:none;
+        clip-path:none;
+        transform:none;
+        transform-origin:center;
+        margin:auto;
+      }
+      .logo-strip img[alt*="British Film Commission"],
+      .logo-strip img[alt*="ITN"],
+      .logo-strip img[alt*="Automata"]{
+        height:clamp(34px, 5.4vw, 48px);
+        max-width:clamp(112px, 17vw, 160px);
+      }
+
+      @media (max-width:480px){
+        .site-header{padding:10px 12px 12px;}
+        h1{font-size:1.6rem;}
+        .custom-popup .maplibregl-popup-content{max-width:calc(100vw - 24px); padding:6px 8px 8px;}
+        .popup-title{font-size:.92rem;}
+        .price-box{min-width:65px; padding:4px 6px;}
+        .rent-table thead th, .rent-table tbody td{ padding:10px 12px; }
+        .data-view{ padding:12px 12px calc(14px + env(safe-area-inset-bottom)); }
+        .table-panel{ width:100%; }
+        .banner-subtitle{ font-size:.72rem; }
+        .logo-marquee{ padding:0; max-width:100%; }
+        .logo-viewport::before, .logo-viewport::after{ width:18px; }
+      }
+      @media (max-width:1400px){
+        .polygon-label{ font-size:var(--label-font-size); padding:4px 7px; max-width:140px; }
+        :root{ --map-height:clamp(900px, calc(124vh - var(--header-h) + 170px), 1320px); }
+        body.is-embedded{ --map-height:clamp(820px, 96vw, 1240px); }
+      }
+
+      @media (min-width: 1081px){
+        .site-header{ padding:5px 16px 7px; }
+        .hero-title{ font-size:clamp(1.14rem, 0.8vw + 0.9rem, 1.45rem); }
+        .hero-lede{ font-size:.78rem; line-height:1.2; }
+        .eyebrow{ padding:5px 9px; font-size:.72rem; }
+        .stat-card{ padding:8px 10px; width:420px; max-width:100%; }
+        .stat-card h3{ margin:0 0 4px; font-size:.82rem; }
+        .stat-card .stat-value{ font-size:1.35rem; }
+        :root{
+          --map-stage-min:calc(110vh - var(--header-h) + 90px);
+          --map-height:clamp(920px, calc(126vh - var(--header-h) + 176px), 1360px);
+        }
+        body.is-embedded{
+          --map-stage-min:auto;
+          --map-height:clamp(840px, 98vw, 1260px);
+        }
+        .map-stage{ margin-top:-70px; }
+      }
+      @media (max-width:960px){
+        .hero-shell{ grid-template-columns:1fr; gap:12px; }
+        .hero-visual{ justify-items:start; display:block; width:100%; }
+        .glow-ring{ display:none; }
+        .stat-stack,
+        .stat-card{ width:100%; }
+        .logo-marquee{ margin:-56px 0 0; }
+        .skip-link,
+        .skip-link-costs{ display:none; }
+        .hero-title,
+        .hero-lede{ white-space:normal; }
+      }
+      @media (min-width:721px) and (max-width:1180px){
+        .welcome-banner{
+          margin-top:calc(30px + env(safe-area-inset-top));
+        }
+      }
+      @media (max-width:720px){
+        :root{
+          --logo-gap:8px;
+          --logo-w:86px;
+          --logo-h:48px;
+          --logo-img-h:30px;
+          --logo-img-w:78px;
+        }
+        .welcome-banner{
+          margin-top:calc(30px + env(safe-area-inset-top));
+          padding:12px 14px;
+          max-height:170px;
+        }
+        .welcome-banner-inner{
+          font-size:clamp(1.05rem, 3.6vw, 1.3rem);
+          line-height:1.25;
+          text-wrap:balance;
+          padding-inline:2px;
+          text-align:center;
+        }
+        .site-header{
+          position:relative;
+          padding:calc(10px + env(safe-area-inset-top)) 14px 10px;
+          margin-top:0;
+        }
+        body.is-embedded .site-header{ margin-top:0; }
+        .hero-shell{ gap:10px; }
+        .hero-shell > *{ min-width:0; }
+        .hero-copy{ gap:6px; }
+        .hero-title{ font-size:clamp(1.35rem, 2.8vw + 1rem, 1.7rem); }
+        .hero-lede{
+          font-size:.84rem;
+          line-height:1.35;
+          white-space:normal;
+          overflow-wrap:anywhere;
+          word-break:break-word;
+        }
+        .eyebrow{ display:none; }
+        .hero-visual{ display:block; width:100%; }
+        .stat-stack{ width:100%; }
+        .stat-card{ width:100%; max-width:100%; padding:8px 10px; border-radius:12px; }
+        body.is-embedded .stat-card{ width:100%; max-width:100%; }
+        .stat-card h3{ font-size:.74rem; margin:0 0 4px; }
+        .stat-card h3{ flex-wrap:wrap; row-gap:2px; }
+        .stat-card .stat-value{ font-size:1.15rem; line-height:1.1; }
+        .headline-rotator{ min-width:0; }
+        .stat-subtext{ font-size:.76rem; line-height:1.2; }
+        .headline-rotator .stat-subtext,
+        .headline-rotator .stat-value,
+        .headline-rotator .stat-subtext strong{
+          overflow-wrap:anywhere;
+          word-break:break-word;
+        }
+        .hero-visual,
+        .stat-stack,
+        .stat-card,
+        .headline-rotator,
+        .stat-card h3,
+        .stat-card small,
+        .stat-card .stat-value{
+          max-width:100%;
+        }
+        .glow-ring{ display:none; }
+        .map-stage{ display:none; }
+        .cta-row{ display:none; }
+        .table-panel{ width:100%; border-radius:14px; box-shadow:0 10px 24px rgba(15,23,42,0.18); }
+        .logo-marquee{ padding:0; margin:6px auto 0; }
+        .logo-banner-inner{ width:min(92vw, 1560px); padding:8px 12px; }
+        .btn{ width:100%; justify-content:center; }
+        .hero-lede{ max-width:unset; }
+        .table-meta .legend{ display:none; }
+        .skip-link,
+        .skip-link-costs{ display:none; }
+        .map-ui{ display:none; }
+        .mobile-browser-notice{ display:flex; }
+        body.is-linkedin-browser .mobile-browser-notice{
+          border-color:rgba(204,32,48,0.42);
+          background:#FFF1F3;
+          box-shadow:0 10px 24px rgba(204,32,48,0.14);
+        }
+      }
+      @media (min-width: 1081px){
+        .table-scroller{ overflow:visible; }
+      }
+      @media (prefers-reduced-motion: reduce){
+        *{transition:none!important;}
+        .logo-track{ animation:none!important; }
+        .live-dot{ animation:none!important; box-shadow:none!important; }
+      }
+
+      button:focus-visible,
+      .btn:focus-visible,
+      .map-ui-btn:focus-visible,
+      .sort-button:focus-visible,
+      .table-search input:focus-visible{
+        outline:3px solid rgba(204,32,48,0.35);
+        outline-offset:2px;
+      }
+
+      /* Popup (unchanged) */
+      .custom-popup{pointer-events:none; opacity:0; transform:translateY(2px); transition:opacity .16s ease, transform .16s ease;}
+      .custom-popup.active{opacity:1; transform:translateY(0);}
+      .custom-popup *{pointer-events:none;user-select:none;}
+      .custom-popup .maplibregl-popup-content{
+        background:rgba(255,255,255,.85);
+        border:1px solid var(--stroke);
+        border-radius:10px;
+        box-shadow:var(--shadow-1);
+        padding:8px 10px 10px;
+        margin:0;
+        text-align:center;
+        box-sizing:border-box;
+        white-space:normal;
+        overflow-wrap:anywhere;
+        word-break:break-word;
+        max-width:min(90vw, 260px);
+        font-family:"DIN Pro","DINPro",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+        font-variant-numeric:tabular-nums;
+        position:relative;
+      }
+      .custom-popup .maplibregl-popup-content::before{
+        content:"";
+        position:absolute;
+        top:0; left:0; right:0;
+        height:3px;
+        background:var(--popup-accent);
+        border-top-left-radius:10px;
+        border-top-right-radius:10px;
+      }
+      .custom-popup .maplibregl-popup-tip{display:none;}
+      .pop-inner{opacity:1; transform:translateY(0); transition:opacity .14s ease, transform .14s ease;}
+      .pop-inner.is-out{opacity:0; transform:translateY(4px);}
+      .pop-inner.is-in{opacity:1; transform:translateY(0);}
+      .popup-title-row{
+        display:flex; align-items:center; justify-content:center; gap:8px;
+        margin:2px 0 4px;
+      }
+      .popup-title{
+        color:var(--ink);
+        font-weight:700; font-size:1rem; letter-spacing:.3px;
+        line-height:1.2; margin:0; padding:0 2px;
+        text-transform:uppercase;
+      }
+      .popup-prices{
+        margin-top:6px;
+        display:flex; justify-content:center; gap:8px; flex-wrap:wrap;
+      }
+      .price-box{
+        border:1px solid var(--stroke);
+        background:#FAFAFB;
+        border-radius:8px;
+        padding:4px 6px;
+        min-width:72px;
+        line-height:1.2;
+        box-shadow:0 10px 22px rgba(15,23,42,0.12);
+      }
+      .price-box .grade{
+        display:block; color:var(--muted-ink); font-size:.85rem; font-weight:700; letter-spacing:.2px;
+      }
+      .price-box .price{
+        display:block; color:var(--ink); font-size:1rem; font-weight:600;
+      }
+
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#data-view">Skip to office data table</a>
+    <a class="skip-link skip-link-costs" href="#data-view">Skip to office costs</a>
+    <div class="welcome-banner" id="welcome-banner" role="status" aria-live="polite">
+      <div class="welcome-banner-inner">Welcome to the Central London Occupier Guide</div>
+    </div>
+    <header class="site-header">
+          <div class="hero-shell">
+        <div class="hero-copy">
+          <h1 class="hero-title">Find the right location for your next London office</h1>
+          <p class="hero-lede" id="hero-lede">Select a submarket on the map below to explore tailored benchmarks, availability, and occupier-ready detail.</p>
+          <div class="cta-row" role="group" aria-label="Jump controls">
+            <button class="btn btn-toggle is-active" type="button" data-action="show-map" aria-pressed="true" aria-label="Jump to map">Explore districts</button>
+            <button class="btn btn-toggle" type="button" data-action="show-data" aria-pressed="false" aria-label="Jump to office costs">Compare office costs</button>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="glow-ring"></div>
+          <div class="stat-stack">
+            <div class="stat-card">
+              <h3><span class="live-dot" aria-hidden="true"></span>RECENT HEADLINE EVENTS</h3>
+              <div class="headline-rotator" id="headline-rotator" aria-live="polite">
+                <small class="stat-subtext" id="headline-description">BP relocating its global headquarters to Bankside, leasing</small>
+                <span class="stat-value" id="headline-size">192,000 sq ft</span>
+                <small class="stat-subtext" id="headline-building">at <strong>Ink, Timber Square, SE1</strong></small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="map-stage" id="map-stage">
+      <div id="map"></div>
+      <div id="map-status" class="map-status is-loading" role="status" aria-live="polite">
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="map-status-text">Loading map…</span>
+        <button type="button" class="map-status-btn" data-map-action="retry">Retry</button>
+      </div>
+      <div class="map-ui" aria-label="Map controls">
+        <button type="button" class="map-ui-btn" data-map-action="toggle-interactions" aria-pressed="false">Enable pan/zoom</button>
+      </div>
+      <div class="psf-control">*All prices are per sq ft</div>
+    </section>
+
+    <!-- Client logos banner (outside #map so MapLibre cannot hide it) -->
+    <div class="logo-marquee" id="logo-marquee" role="region" aria-label="Clients we work with">
+      <div class="logo-accent" aria-hidden="true"></div>
+      <div class="logo-banner-inner">
+        <p class="banner-subtitle">LSH Trusted by Leading Office Occupiers:</p>
+        <div class="logo-viewport">
+          <div class="logo-track" id="logo-track">
+            <!-- JS injects two identical strips for a seamless left-to-right scroll -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-view" id="data-view" aria-hidden="false">
+      <aside id="rents-panel" class="table-panel" role="region" aria-labelledby="rents-panel-title">
+        <div class="panel-accent" aria-hidden="true"></div>
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 id="rents-panel-title" class="panel-title">Central London Office Rents (Q2 2026)</h2>
+          </div>
+        </div>
+        <div id="mobile-browser-notice" class="mobile-browser-notice" role="note">
+          <span class="mobile-browser-notice-icon" aria-hidden="true">↗</span>
+          <div class="mobile-browser-notice-copy">
+            <strong id="mobile-browser-notice-title" class="mobile-browser-notice-title">Opening this guide from LinkedIn?</strong>
+            <p id="mobile-browser-notice-text" class="mobile-browser-notice-text">Before opening a dashboard, tap <strong>•••</strong> in LinkedIn and choose <strong>Open in browser</strong>.</p>
+          </div>
+        </div>
+        <div class="table-meta">
+          <div class="legend" aria-hidden="true">
+            <span class="chip chip-grade-a"><span class="chip-dot"></span>Grade A (Best-in-class)</span>
+            <span class="chip chip-grade-b"><span class="chip-dot"></span>Grade B (Good quality)</span>
+          </div>
+          <div class="table-search" role="search">
+            <div class="table-search-combobox">
+              <input id="table-search-input" type="search" placeholder="Select submarket" aria-label="Select submarket" role="combobox" aria-expanded="false" aria-controls="submarket-dropdown" aria-autocomplete="list" autocomplete="off" />
+              <button type="button" class="combobox-toggle" id="submarket-dropdown-toggle" aria-label="Show submarket options">▼</button>
+              <div id="submarket-dropdown" class="table-search-dropdown" role="listbox" hidden></div>
+            </div>
+            <button type="button" id="table-search-clear" aria-label="Clear search">Clear</button>
+          </div>
+          <p class="meta-note">Values shown per sq ft and to the nearest whole number; tap the submarket title button to open the dashboard.</p>
+        </div>
+        <div class="table-scroller">
+          <table id="rents-table" class="rent-table">
+            <colgroup>
+              <col class="col-submarket" />
+              <col class="col-prime" />
+              <col class="col-total" />
+              <col class="col-change" />
+              <col class="col-prime" />
+              <col class="col-total" />
+              <col class="col-change" />
+            </colgroup>
+            <thead>
+                <tr class="group-row">
+                  <th scope="col" rowspan="2" class="submarket-head"><button class="sort-button" type="button" data-sort="submarket" aria-sort="none"><span class="sort-title">Submarket</span><span class="sort-subtitle">Linked dashboards</span><span class="sort-indicator">⇅</span></button></th>
+                  <th scope="col" colspan="3" class="grade-group col-grade-a">Grade A</th>
+                  <th scope="col" colspan="3" class="grade-group col-grade-b">Grade B</th>
+                </tr>
+                <tr class="detail-row">
+                  <th scope="col" class="col-grade-a"><button class="sort-button" type="button" data-sort="priceA" aria-sort="descending"><span class="sort-title">Prime rent (psf)</span><span class="sort-subtitle">Best-in-class</span><span class="sort-indicator">⇅</span></button></th>
+                  <th scope="col" class="col-grade-a"><button class="sort-button" type="button" data-sort="totalCostA" aria-sort="none"><span class="sort-title">Total cost (psf)</span><span class="sort-subtitle">Rent + rates + service charge</span><span class="sort-indicator">⇅</span></button></th>
+                  <th scope="col" class="col-grade-a"><button class="sort-button" type="button" data-sort="changeA" aria-sort="none"><span class="sort-title">12-m change</span><span class="sort-subtitle">Prime rent trend</span><span class="sort-indicator">⇅</span></button></th>
+                  <th scope="col" class="col-grade-b"><button class="sort-button" type="button" data-sort="priceB" aria-sort="none"><span class="sort-title">Prime rent (psf)</span><span class="sort-subtitle">Good quality</span><span class="sort-indicator">⇅</span></button></th>
+                  <th scope="col" class="col-grade-b"><button class="sort-button" type="button" data-sort="totalCostB" aria-sort="none"><span class="sort-title">Total cost (psf)</span><span class="sort-subtitle">Rent + rates + service charge</span><span class="sort-indicator">⇅</span></button></th>
+                  <th scope="col" class="col-grade-b"><button class="sort-button" type="button" data-sort="changeB" aria-sort="none"><span class="sort-title">12-m change</span><span class="sort-subtitle">Prime rent trend</span><span class="sort-indicator">⇅</span></button></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </aside>
+    </div>
+
+    <div id="browser-help-overlay" class="browser-help-overlay" hidden>
+      <div class="browser-help-dialog" role="dialog" aria-modal="true" aria-labelledby="browser-help-title" aria-describedby="browser-help-description">
+        <h2 id="browser-help-title">Open this guide in your browser</h2>
+        <p id="browser-help-description">LinkedIn cannot open these dashboards here.</p>
+        <ol class="browser-help-steps">
+          <li>Tap <strong>•••</strong> at the top of this screen.</li>
+          <li>Tap <strong>Open in browser</strong>.</li>
+          <li>Choose the submarket again.</li>
+        </ol>
+        <button type="button" class="browser-help-close" data-browser-help-close>Close</button>
+      </div>
+    </div>
+
+    <script src="vendor/maplibre-gl/maplibre-gl.js"></script>
+    <script>
+      const isEmbedded = (() => {
+        try {
+          return window.self !== window.top;
+        } catch (error) {
+          return true;
+        }
+      })();
+      document.body.classList.toggle('is-embedded', isEmbedded);
+
+      /* === DATA === */
+      const submarketData = [
+        { label: "Mayfair & St James's", gradeA: { primeRent: 190, totalCost: 294.47, change: 5.555555556 }, gradeB: { primeRent: 90.5, totalCost: 150.75305, change: 0.555555556 } },
+        { label: "Knightsbridge / Belgravia", gradeA: { primeRent: 100, totalCost: 159.92715, change: 7.52688172 }, gradeB: { primeRent: 65.5, totalCost: 114.04715, change: 0.769230769 } },
+        { label: "Marylebone", gradeA: { primeRent: 118, totalCost: 180.74715, change: 7.272727273 }, gradeB: { primeRent: 68, totalCost: 118.52305, change: 0.740740741 } },
+        { label: "Soho", gradeA: { primeRent: 118, totalCost: 180.47715, change: 7.272727273 }, gradeB: { primeRent: 75.5, totalCost: 125.17305, change: 0.666666667 } },
+        { label: "Noho / Fitzrovia", gradeA: { primeRent: 118, totalCost: 178.44715, change: 7.272727273 }, gradeB: { primeRent: 68, totalCost: 116.26305, change: 0.740740741 } },
+        { label: "Covent Garden", gradeA: { primeRent: 103, totalCost: 158.63715, change: 8.421052632 }, gradeB: { primeRent: 65.5, totalCost: 112.44305, change: 0.769230769 } },
+        { label: "Euston & Kings Cross", gradeA: { primeRent: 103, totalCost: 159.49715, change: 8.421052632 }, gradeB: { primeRent: 65.5, totalCost: 110.25305, change: 0.769230769 } },
+        { label: "Victoria / Westminster", gradeA: { primeRent: 105, totalCost: 158.02, change: 8.24742268 }, gradeB: { primeRent: 65.5, totalCost: 107.9, change: 0.769230769 } },
+        { label: "Clerkenwell & Farringdon", gradeA: { primeRent: 100, totalCost: 148.14, change: 5.263157895 }, gradeB: { primeRent: 70.5, totalCost: 109.62305, change: 0.714285714 } },
+        { label: "Midtown", gradeA: { primeRent: 98, totalCost: 149.14, change: 8.888888889 }, gradeB: { primeRent: 58, totalCost: 100.99305, change: 0.869565217 } },
+        { label: "City (EC2, EC3, EC4)", gradeA: { primeRent: 100, totalCost: 153.42, change: 5.263157895 }, gradeB: { primeRent: 55.5, totalCost: 97.70305, change: 0.909090909 } },
+        { label: "Paddington", gradeA: { primeRent: 93, totalCost: 147.34715, change: 9.411764706 }, gradeB: { primeRent: 53, totalCost: 97.70305, change: 0.952380952 } },
+        { label: "Old Street / Shoreditch", gradeA: { primeRent: 89, totalCost: 130, change: 7.878787879 }, gradeB: { primeRent: 55.5, totalCost: 92.65305, change: 0.909090909 } },
+        { label: "London Bridge / Waterloo", gradeA: { primeRent: 92, totalCost: 137.42715, change: 8.235294118 }, gradeB: { primeRent: 55.5, totalCost: 91.14305, change: 0.909090909 } },
+        { label: "Vauxhall / Nine Elms & Battersea", gradeA: { primeRent: 66, totalCost: 109.80305, change: 1.538461538 }, gradeB: { primeRent: 42.5, totalCost: 69.78075, change: 0 } },
+        { label: "Kensington & Chelsea", gradeA: { primeRent: 80, totalCost: 142.01715, change: 6.666666667 }, gradeB: { primeRent: 43.5, totalCost: 82.14895, change: 0 } },
+        { label: "Camden", gradeA: { primeRent: 64, totalCost: 117.52305, change: 1.587301587 }, gradeB: { primeRent: 43, totalCost: 77.19, change: 0 } },
+        { label: "Hammersmith", gradeA: { primeRent: 58, totalCost: 97.91, change: 5.454545455 }, gradeB: { primeRent: 40, totalCost: 73.77, change: 0 } },
+        { label: "Aldgate / Whitechapel", gradeA: { primeRent: 61, totalCost: 111.67305, change: 1.666666667 }, gradeB: { primeRent: 40, totalCost: 71.95305, change: 0 } },
+        { label: "White City / Shepherd's Bush", gradeA: { primeRent: 61, totalCost: 101.94305, change: 1.666666667 }, gradeB: { primeRent: 42.5, totalCost: 74.51, change: 0 } },
+        { label: "Canary Wharf", gradeA: { primeRent: 59, totalCost: 100.4556, change: 7.272727273 }, gradeB: { primeRent: 32.5, totalCost: 67.99535, change: 1.5625 } }
+      ];
+
+      function formatCurrency(value){
+        return Number.isFinite(value) ? `£${Math.round(value)}` : '—';
+      }
+
+      function formatPercent(value){
+        if (!Number.isFinite(value)) return '—';
+        const arrow = value > 0 ? '↑' : value < 0 ? '↓' : '→';
+        return `${arrow} ${value.toFixed(1)}%`;
+      }
+
+      const priceData = submarketData.reduce((acc, entry) => {
+        acc[entry.label] = {
+          A: formatCurrency(entry.gradeA?.primeRent),
+          B: formatCurrency(entry.gradeB?.primeRent)
+        };
+        return acc;
+      }, {});
+
+      const labelToUrl = {
+        "Mayfair & St James's": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/mayfair%20st%20james",
+        "Mayfair / St James’s": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/mayfair%20st%20james",
+        "Mayfair / St James's": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/mayfair%20st%20james",
+        "Aldgate / Whitechapel": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/aldgate%20whitechapel",
+        "Knightsbridge / Belgravia": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/knightsbridge%20belgravia",
+        "Old Street / Shoreditch": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/old%20street%20shoreditch%20hoxton",
+        "Old Street / Shoreditch / Hoxton": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/old%20street%20shoreditch%20hoxton",
+        "Vauxhall / Nine Elms & Battersea": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/vauxhall%20nine%20elms%20battersea",
+        "Vauxhall / Nine Elms / Battersea": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/vauxhall%20nine%20elms%20battersea",
+        "Vauxhall / Nine Elms /Battersea": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/vauxhall%20nine%20elms%20battersea",
+        "Kensington & Chelsea": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/kensington%20and%20chelsea",
+        "Canary Wharf": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/canary%20wharf",
+        "Camden": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/camden",
+        "Hammersmith": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/hammersmith",
+        "Clerkenwell & Farringdon": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/clerkenwell%20farringdon",
+        "Clerkenwell / Farringdon": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/clerkenwell%20farringdon",
+        "London Bridge / Waterloo": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/london%20bridge%20waterloo",
+        "City (EC2, EC3, EC4)": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/the%20city",
+        "The City": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/the%20city",
+        "Noho / Fitzrovia": "submarkets/noho-fitzrovia/",
+        "White City / Shepherd's Bush": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/white%20city%20shepherds%20bush",
+        "White City": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/white%20city%20shepherds%20bush",
+        "Victoria / Westminster": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/victoria%20westminster",
+        "Midtown": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/midtown",
+        "Euston & Kings Cross": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/kings%20cross%20and%20euston",
+        "King’s Cross / Euston": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/kings%20cross%20and%20euston",
+        "King's Cross / Euston": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/kings%20cross%20and%20euston",
+        "Covent Garden": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/covent%20garden",
+        "Paddington": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/paddington",
+        "Marylebone": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/marylebone",
+        "Soho": "https://www.lsh.co.uk/office%20occupier%20market/london/central%20london%20office%20occupier%20market/soho"
+      };
+
+      /* === MAP (restored to proven working state — no persistent labels) === */
+      const root = document.documentElement;
+      const heatColorA = getComputedStyle(root).getPropertyValue('--grade-a-strong').trim() || '#c72a3b';
+      const heatColorB = getComputedStyle(root).getPropertyValue('--grade-b-strong').trim() || '#433c36';
+
+      function shouldEnableHeatmap(){
+        return window.matchMedia('(min-width: 1081px)').matches;
+      }
+
+      let heatmapEnabled = shouldEnableHeatmap();
+      const headerEl = document.querySelector('.site-header');
+      const welcomeBannerEl = document.getElementById('welcome-banner');
+      const logoMarqueeEl = document.getElementById('logo-marquee');
+      const dataView = document.getElementById('data-view');
+
+      function initWelcomeBanner(){
+        if (!welcomeBannerEl) return;
+        let dismissed = false;
+
+        const dismissWelcome = () => {
+          if (dismissed) return;
+          dismissed = true;
+          welcomeBannerEl.classList.add('is-hidden');
+          window.setTimeout(() => {
+            welcomeBannerEl.setAttribute('aria-hidden', 'true');
+          }, 420);
+          window.removeEventListener('scroll', onInitialScroll);
+        };
+
+        const onInitialScroll = () => {
+          if (window.scrollY > 0) dismissWelcome();
+        };
+
+        window.addEventListener('scroll', onInitialScroll, { passive: true });
+      }
+
+      const map = new maplibregl.Map({
+        container: 'map',
+        style: {
+          version: 8,
+          glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+          sources: {},
+          layers: [{ id: 'background', type: 'background', paint: { 'background-color': '#ffffff' } }]
+        },
+        center: [-0.1278, 51.5074],
+        zoom: 11,
+        canvasContextAttributes: { antialias: true },
+        antialias: true
+      });
+
+      // Disable interactions (as before)
+      map.dragPan.disable();
+      map.scrollZoom.disable();
+      map.doubleClickZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+      map.dragRotate.disable();
+      map.touchZoomRotate.disable();
+      map.getCanvas().style.cursor = 'default';
+
+      const mapContainer = document.getElementById('map');
+      const mapStatusEl = document.getElementById('map-status');
+      const mapStatusTextEl = mapStatusEl ? mapStatusEl.querySelector('.map-status-text') : null;
+      const mapUiEl = document.querySelector('.map-ui');
+      const mapStageEl = document.getElementById('map-stage');
+      const heroLedeEl = document.getElementById('hero-lede');
+      const desktopMedia = window.matchMedia('(min-width: 1081px)');
+      const phoneMedia = window.matchMedia('(max-width: 720px)');
+
+      const HERO_LEDE_TEXT = {
+        phone: 'Select a submarket in the table below, then tap the submarket title text to open its dashboard and explore tailored benchmarks, availability, and occupier-ready detail.',
+        standard: 'Select a submarket on the map below to explore tailored benchmarks, availability, and occupier-ready detail.'
+      };
+
+      let hoveredId = null;
+      let activeHoverLabel = null;
+      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, className: 'custom-popup', maxWidth: '260px' });
+      popup.on('open', () => popup.getElement().style.pointerEvents = 'none');
+      let popupTimer = null;
+      let hoverLeaveTimer = null;
+      let popupFadeTimer = null;
+      let lastTouchActivationAt = 0;
+      let touchStartPoint = null;
+      let touchMovedDuringGesture = false;
+      let phoneViewportUserAdjusted = false;
+
+      const brand = getComputedStyle(document.documentElement).getPropertyValue('--brand').trim();
+      const water = getComputedStyle(document.documentElement).getPropertyValue('--water').trim();
+      const waterStroke = getComputedStyle(document.documentElement).getPropertyValue('--water-stroke').trim();
+      const labelMarkers = [];
+      let geojsonFeatures = null;
+      let mapInteractionsEnabled = false;
+      let phoneInteractionSnapshot = null;
+      let mapEventsBound = false;
+      let cachedHeaderHeight = 0;
+
+      function isDesktopView(){
+        return desktopMedia.matches;
+      }
+
+      function isPhoneView(){
+        return phoneMedia.matches;
+      }
+
+      function isEmbeddedPhoneView(){
+        return isEmbedded && isPhoneView();
+      }
+
+      function shouldUseSameTabNavigation(){
+        /* Dashboard pages must escape the nested Infogram iframe on every device. */
+        return false;
+      }
+
+      function isLinkedInInAppBrowser(){
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('inAppBrowser') === 'linkedin') return true;
+
+        return /LinkedInApp|LinkedIn/i.test(navigator.userAgent || '');
+      }
+
+      function shouldShowLinkedInBlocker(){
+        return isPhoneView() && isLinkedInInAppBrowser();
+      }
+
+      let browserHelpReturnFocus = null;
+
+      function hideBrowserHelp(){
+        const overlay = document.getElementById('browser-help-overlay');
+        if (!overlay || overlay.hidden) return;
+        overlay.hidden = true;
+        document.body.classList.remove('browser-help-open');
+        if (browserHelpReturnFocus && typeof browserHelpReturnFocus.focus === 'function') {
+          browserHelpReturnFocus.focus();
+        }
+        browserHelpReturnFocus = null;
+      }
+
+      function showBrowserHelp(){
+        const overlay = document.getElementById('browser-help-overlay');
+        if (!overlay) return;
+        browserHelpReturnFocus = document.activeElement;
+        overlay.hidden = false;
+        document.body.classList.add('browser-help-open');
+        overlay.querySelector('[data-browser-help-close]')?.focus();
+      }
+
+      function setupMobileBrowserGuidance(){
+        const isLinkedIn = isLinkedInInAppBrowser();
+        document.body.classList.toggle('is-linkedin-browser', isLinkedIn);
+
+        if (isLinkedIn) {
+          const title = document.getElementById('mobile-browser-notice-title');
+          const text = document.getElementById('mobile-browser-notice-text');
+          if (title) title.textContent = 'Open this guide in your browser';
+          if (text) text.innerHTML = 'LinkedIn blocks the dashboards. Tap <strong>•••</strong> above, then choose <strong>Open in browser</strong>.';
+        }
+
+        const overlay = document.getElementById('browser-help-overlay');
+        const closeButton = overlay?.querySelector('[data-browser-help-close]');
+        closeButton?.addEventListener('click', hideBrowserHelp);
+        overlay?.addEventListener('click', (event) => {
+          if (event.target === overlay) hideBrowserHelp();
+        });
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape' && overlay && !overlay.hidden) hideBrowserHelp();
+        });
+      }
+
+      function openDashboardUrl(targetUrl){
+        if (!targetUrl) return;
+
+        if (shouldShowLinkedInBlocker()) {
+          showBrowserHelp();
+          return;
+        }
+
+        if (shouldUseSameTabNavigation()) {
+          window.location.assign(targetUrl);
+          return;
+        }
+        window.open(targetUrl, '_blank', 'noopener');
+      }
+
+      function isMapVisibleToUser(){
+        if (!mapStageEl) return false;
+        const stageStyles = window.getComputedStyle(mapStageEl);
+        return stageStyles.display !== 'none' && stageStyles.visibility !== 'hidden';
+      }
+
+      function syncHeroLede(){
+        if (!heroLedeEl) return;
+        heroLedeEl.textContent = isMapVisibleToUser() ? HERO_LEDE_TEXT.standard : HERO_LEDE_TEXT.phone;
+      }
+
+      function getBaseLabelFontRange(){
+        const width = mapContainer ? mapContainer.clientWidth : window.innerWidth;
+        const min = 0.54;
+        const max = 0.8;
+        const scaled = min + ((Math.min(Math.max(width, 920), 1880) - 920) / 960) * (max - min);
+        return { min, max: Math.max(min, scaled) };
+      }
+
+      function setLabelFontSize(sizeRem){
+        root.style.setProperty('--label-font-size', `${sizeRem.toFixed(3)}rem`);
+      }
+
+      function mapLabelsOverlap(padding = 2){
+        if (!isDesktopView() || !labelMarkers.length) return false;
+        const rects = labelMarkers
+          .map((item) => getRelativeRect(item?.marker?.getElement?.()))
+          .filter(Boolean)
+          .map((rect) => inflateRect(rect, padding));
+
+        for (let i = 0; i < rects.length; i++) {
+          for (let j = i + 1; j < rects.length; j++) {
+            if (boxesOverlap(rects[i], rects[j])) return true;
+          }
+        }
+        return false;
+      }
+
+      function updateDynamicLabelSize(){
+        const { min, max } = getBaseLabelFontRange();
+        setLabelFontSize(max);
+      }
+
+      function updateLabelCollisionScaling(){
+        if (!isDesktopView() || !labelMarkers.length) return;
+
+        labelMarkers.forEach((entry) => {
+          const el = entry?.marker?.getElement?.();
+          if (el) el.style.setProperty('--label-scale', '1');
+        });
+
+        const { min, max } = getBaseLabelFontRange();
+        let low = min;
+        let high = max;
+        let best = min;
+
+        for (let i = 0; i < 8; i++) {
+          const mid = (low + high) / 2;
+          setLabelFontSize(mid);
+          if (mapLabelsOverlap()) {
+            high = mid;
+          } else {
+            best = mid;
+            low = mid;
+          }
+        }
+
+        setLabelFontSize(best);
+      }
+
+      function showMapLoading(message = 'Loading map…'){
+        if (!mapStatusEl) return;
+        mapStatusEl.classList.remove('is-hidden', 'is-error');
+        mapStatusEl.classList.add('is-loading');
+        if (mapStatusTextEl) mapStatusTextEl.textContent = message;
+      }
+
+      function showMapError(message = 'We couldn’t load the map data.'){
+        if (!mapStatusEl) return;
+        mapStatusEl.classList.remove('is-hidden', 'is-loading');
+        mapStatusEl.classList.add('is-error');
+        if (mapStatusTextEl) mapStatusTextEl.textContent = message;
+      }
+
+      function hideMapStatus(){
+        if (!mapStatusEl) return;
+        mapStatusEl.classList.add('is-hidden');
+        mapStatusEl.classList.remove('is-loading', 'is-error');
+      }
+
+      function setupMapUi(){
+        if (!mapUiEl) return;
+        mapUiEl.addEventListener('click', (event) => {
+          const target = event.target.closest('button');
+          if (!target) return;
+          const action = target.getAttribute('data-map-action');
+          if (action === 'reset') {
+            fitToInitialBounds({ duration: 400 });
+          }
+          if (action === 'toggle-interactions') {
+            setMapInteractions(!mapInteractionsEnabled);
+          }
+        });
+
+        const retryBtn = document.querySelector('[data-map-action="retry"]');
+        if (retryBtn){
+          retryBtn.addEventListener('click', () => bootMapData());
+        }
+        setMapInteractions(false);
+        syncPhoneInteractions();
+      }
+
+      function setHover(id, isHovering) {
+        map.setFeatureState({ source: 'subdistricts', id }, { hover: isHovering });
+      }
+
+      function setMapInteractions(enabled){
+        const phoneMode = isPhoneView();
+        const embeddedPhoneMode = isEmbeddedPhoneView();
+        mapInteractionsEnabled = enabled;
+        if (enabled){
+          if (phoneMode && !embeddedPhoneMode) {
+            map.dragPan.disable();
+          } else {
+            map.dragPan.enable();
+          }
+          map.touchZoomRotate.enable();
+          map.scrollZoom.disable();
+          map.doubleClickZoom.disable();
+          map.boxZoom.disable();
+          map.keyboard.disable();
+          map.dragRotate.disable();
+          if (embeddedPhoneMode) {
+            mapContainer.style.touchAction = 'none';
+          } else {
+            mapContainer.style.touchAction = phoneMode ? 'pan-y pinch-zoom' : 'none';
+          }
+        } else {
+          map.dragPan.disable();
+          map.scrollZoom.disable();
+          map.doubleClickZoom.disable();
+          map.boxZoom.disable();
+          map.keyboard.disable();
+          map.dragRotate.disable();
+          map.touchZoomRotate.disable();
+          mapContainer.style.touchAction = 'auto';
+        }
+        const toggleBtn = document.querySelector('[data-map-action="toggle-interactions"]');
+        if (toggleBtn){
+          toggleBtn.textContent = enabled ? 'Disable pan/zoom' : 'Enable pan/zoom';
+          toggleBtn.setAttribute('aria-pressed', String(enabled));
+        }
+      }
+
+      function getBaseFillColorExpression(){
+        return [
+          'case',
+          ['boolean', ['feature-state', 'hover'], false], 'rgba(204,32,48,0.10)',
+          '#EDEFF2'
+        ];
+      }
+
+      function getFeatureBoundsCenter(coords) {
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        const flat = coords.flat(Infinity);
+        for (let i = 0; i < flat.length; i += 2) {
+          const x = flat[i], y = flat[i + 1];
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
+        }
+        return [(minX + maxX) / 2, (minY + maxY) / 2];
+      }
+
+      function centroidForRing(ring){
+        let area = 0;
+        let cx = 0;
+        let cy = 0;
+        for (let i = 0; i < ring.length - 1; i++) {
+          const [x0, y0] = ring[i];
+          const [x1, y1] = ring[i + 1];
+          const cross = (x0 * y1) - (x1 * y0);
+          area += cross;
+          cx += (x0 + x1) * cross;
+          cy += (y0 + y1) * cross;
+        }
+        area = area / 2;
+        if (!area) return null;
+        return { point: [cx / (6 * area), cy / (6 * area)], area };
+      }
+
+      function centroidForPolygon(coords){
+        if (!Array.isArray(coords) || !coords.length) return null;
+        const outerRing = coords[0];
+        if (!Array.isArray(outerRing)) return null;
+        const ringCentroid = centroidForRing(outerRing);
+        if (ringCentroid) return ringCentroid.point;
+        const flat = outerRing.flat();
+        const len = flat.length;
+        if (!len) return null;
+        let sumX = 0, sumY = 0;
+        for (let i = 0; i < len; i += 2) {
+          sumX += flat[i];
+          sumY += flat[i + 1];
+        }
+        return [sumX / (len / 2), sumY / (len / 2)];
+      }
+
+      function getFeatureLabelCenter(geometry){
+        if (!geometry) return null;
+        const { type, coordinates } = geometry;
+        if (type === 'Polygon') {
+          const centroid = centroidForPolygon(coordinates);
+          return centroid || getFeatureBoundsCenter(coordinates);
+        }
+        if (type === 'MultiPolygon') {
+          let weightedX = 0, weightedY = 0, totalArea = 0;
+          for (const poly of coordinates) {
+            const ring = Array.isArray(poly) && Array.isArray(poly[0]) ? poly[0] : null;
+            const ringData = ring ? centroidForRing(ring) : null;
+            const centroid = centroidForPolygon(poly);
+            const weight = Math.abs(ringData?.area || 0);
+            if (centroid) {
+              const weightToUse = weight || 1;
+              weightedX += centroid[0] * weightToUse;
+              weightedY += centroid[1] * weightToUse;
+              totalArea += weightToUse;
+            }
+          }
+          if (totalArea) return [weightedX / totalArea, weightedY / totalArea];
+          if (Array.isArray(coordinates[0])) return getFeatureBoundsCenter(coordinates.flat(1));
+        }
+        if (type === 'Point') return coordinates;
+        if (type === 'LineString') return coordinates[Math.floor(coordinates.length / 2)];
+        return Array.isArray(coordinates) ? getFeatureBoundsCenter(coordinates) : null;
+      }
+
+      function formatLabelText(label){
+        if (!label) return '';
+        const rawWords = String(label).split(' ').filter(Boolean);
+        const words = [];
+        for (let i = 0; i < rawWords.length; i++) {
+          if (rawWords[i] === '/') {
+            if (words.length) {
+              words[words.length - 1] = `${words[words.length - 1]} /`;
+            } else if (rawWords[i + 1]) {
+              words.push(`/${rawWords[i + 1]}`);
+              i += 1;
+            }
+            continue;
+          }
+          words.push(rawWords[i]);
+        }
+        if (words.length <= 1) return label;
+        let bestSplit = 1;
+        let smallestDiff = Infinity;
+        for (let i = 1; i < words.length; i++) {
+          const lineA = words.slice(0, i).join(' ');
+          const lineB = words.slice(i).join(' ');
+          const diff = Math.abs(lineA.length - lineB.length);
+          if (diff < smallestDiff) {
+            smallestDiff = diff;
+            bestSplit = i;
+          }
+        }
+        const line1 = words.slice(0, bestSplit).join(' ');
+        const line2 = words.slice(bestSplit).join(' ');
+        return `${line1}\n${line2}`;
+      }
+
+      function boxesOverlap(a, b){
+        return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+      }
+
+      function inflateRect(rect, padding = 4){
+        return {
+          top: rect.top - padding,
+          right: rect.right + padding,
+          bottom: rect.bottom + padding,
+          left: rect.left - padding
+        };
+      }
+
+      function getRelativeRect(el){
+        if (!el || !mapContainer) return null;
+        const mapRect = mapContainer.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+        return {
+          top: rect.top - mapRect.top,
+          right: rect.right - mapRect.left,
+          bottom: rect.bottom - mapRect.top,
+          left: rect.left - mapRect.left
+        };
+      }
+
+      function ringArea(ring = []){
+        let area = 0;
+        for (let i = 0; i < ring.length - 1; i++) {
+          const [x0, y0] = ring[i];
+          const [x1, y1] = ring[i + 1];
+          area += (x0 * y1) - (x1 * y0);
+        }
+        return Math.abs(area / 2);
+      }
+
+      function featureArea(geometry){
+        if (!geometry) return 0;
+        const { type, coordinates } = geometry;
+        if (type === 'Polygon' && Array.isArray(coordinates)) {
+          return ringArea(coordinates[0]);
+        }
+        if (type === 'MultiPolygon' && Array.isArray(coordinates)) {
+          return coordinates.reduce((sum, poly) => sum + ringArea(poly?.[0] || []), 0);
+        }
+        return 0;
+      }
+
+      function setLabelVisibility(label, isVisible){
+        if (!label) return;
+        const entry = labelMarkers.find(item => item.label === label);
+        const el = entry?.marker?.getElement?.();
+        if (el) {
+          el.style.opacity = isVisible ? '1' : '0';
+        }
+      }
+
+      function renderPopup(label, dataInfo){
+        const title = (label || '').toUpperCase();
+        const prices = dataInfo ? `
+    <div class="popup-prices">
+      <div class="price-box">
+        <span class="grade">Grade A</span>
+        <span class="price">${dataInfo.A}</span>
+      </div>
+      <div class="price-box"><span class="grade">Grade B</span><span class="price">${dataInfo.B}</span></div>
+    </div>` : '';
+        return `
+    <div class="pop-inner" data-label="${title}" role="status" aria-live="polite">
+      <div class="popup-title-row">
+        <h3 class="popup-title">${title}</h3>
+      </div>
+      ${prices}
+    </div>`;
+      }
+
+      function removeHover() {
+        if (hoveredId) {
+          setHover(hoveredId, false);
+          hoveredId = null;
+          hidePopup();
+          map.getCanvas().style.cursor = 'default';
+        }
+        clearTimeout(popupTimer);
+        if (activeHoverLabel) {
+          setLabelVisibility(activeHoverLabel, true);
+          activeHoverLabel = null;
+        }
+      }
+
+      function showPopup(center, label) {
+        const nextHtml = renderPopup(label, priceData[label]);
+        const isOpen = popup.isOpen();
+        clearTimeout(popupFadeTimer);
+
+        if (!isOpen) {
+          popup.setLngLat(center).setHTML(nextHtml).addTo(map);
+          requestAnimationFrame(() => popup.getElement().classList.add('active'));
+          return;
+        }
+
+        const el = popup.getElement();
+        if (el) el.classList.add('active');
+
+        const current = popup.getElement().querySelector('.pop-inner');
+        const currentLabel = current ? current.getAttribute('data-label') : '';
+        const nextLabel = (label || '').toUpperCase();
+
+        if (currentLabel === nextLabel) {
+          popup.setLngLat(center);
+          return;
+        }
+
+        if (current) current.classList.add('is-out');
+        setTimeout(() => {
+          popup.setLngLat(center).setHTML(nextHtml);
+          const fresh = popup.getElement().querySelector('.pop-inner');
+          fresh.classList.add('is-out');
+          requestAnimationFrame(() => {
+            fresh.classList.remove('is-out');
+            fresh.classList.add('is-in');
+          });
+        }, 130);
+      }
+
+      function hidePopup(){
+        if (!popup.isOpen()) return;
+        const el = popup.getElement();
+        el.classList.remove('active');
+        clearTimeout(popupFadeTimer);
+        popupFadeTimer = setTimeout(() => popup.remove(), 180);
+      }
+
+      function scheduleClearHover() {
+        clearTimeout(hoverLeaveTimer);
+        hoverLeaveTimer = setTimeout(removeHover, 100);
+      }
+
+      function findFeatureByLabel(label){
+        if (!label || !Array.isArray(geojsonFeatures)) return null;
+        return geojsonFeatures.find(feature => feature?.properties?.label === label) || null;
+      }
+
+      function refreshActivePopup(){
+        if (!activeHoverLabel) return;
+        const feature = findFeatureByLabel(activeHoverLabel);
+        if (!feature) return;
+        const center = getFeatureLabelCenter(feature.geometry);
+        showPopup(center, activeHoverLabel);
+      }
+
+      function focusFeatureByLabel(label){
+        const feature = findFeatureByLabel(label);
+        if (!feature) return;
+        const featureLabel = feature.properties?.label || label;
+        const id = feature.id || feature.properties?.fid || featureLabel;
+
+        if (hoveredId !== id) {
+          if (hoveredId) setHover(hoveredId, false);
+          hoveredId = id;
+          setHover(hoveredId, true);
+        }
+
+        const center = getFeatureLabelCenter(feature.geometry);
+        if (featureLabel && featureLabel !== activeHoverLabel) {
+          if (activeHoverLabel) setLabelVisibility(activeHoverLabel, true);
+          setLabelVisibility(featureLabel, false);
+          activeHoverLabel = featureLabel;
+        }
+        showPopup(center, featureLabel);
+      }
+
+      /* Dynamic padding that respects header + logo banner height.
+         Ensures the fitted bounds are never hidden behind chrome. */
+      function getDynamicFitPadding(){
+        const headerH = Math.ceil(headerEl?.getBoundingClientRect()?.height || 0);
+        const bannerH = Math.ceil(logoMarqueeEl?.offsetHeight || 0);
+        const psfWidth = Math.ceil(document.querySelector('.psf-control')?.getBoundingClientRect()?.width || 0);
+        const safeBottom = isPhoneView() ? 6 : 10;
+        const northBias = isPhoneView() ? 16 : 26;
+        const rightPadding = isPhoneView() ? 12 : Math.max(20, psfWidth + 32);
+        const topCompression = isPhoneView() ? 8 : 22;
+        return {
+          top: Math.max(0, headerH - topCompression),
+          right: rightPadding,
+          bottom: bannerH + safeBottom + northBias,
+          left: isPhoneView() ? 12 : 14
+        };
+      }
+
+      function resolveEmbeddedHostOffset(){
+        if (!isEmbedded) return 0;
+        const params = new URLSearchParams(window.location.search);
+        const paramValue = Number(params.get('hostBannerOffset'));
+        if (Number.isFinite(paramValue) && paramValue >= 0) {
+          return Math.round(paramValue);
+        }
+        const viewportWidth = Math.max(320, Math.round(window.visualViewport?.width || window.innerWidth || 0));
+        const viewportHeight = Math.max(420, Math.round(window.visualViewport?.height || window.innerHeight || 0));
+        /*
+          Embedded pages usually sit underneath the host site's sticky nav + breadcrumb.
+          Keep a baseline offset even on wide desktop viewports, then add extra room for
+          narrow/short embeds where host chrome tends to be taller.
+        */
+        const baseOffset = 48;
+        const noOffsetWidth = 1360;
+        const fullOffsetWidth = 360;
+        const maxWidthBoost = 30;
+        const widthProgress = (noOffsetWidth - viewportWidth) / (noOffsetWidth - fullOffsetWidth);
+        const widthBoost = Math.max(0, Math.min(1, widthProgress)) * maxWidthBoost;
+
+        /* Short embedded viewports tend to have thicker sticky host nav stacks. */
+        const shortViewportBoost = Math.max(0, Math.min(1, (920 - viewportHeight) / 380)) * 14;
+        return Math.round(baseOffset + widthBoost + shortViewportBoost);
+      }
+
+      function applyEmbeddedHostOffset(offset = resolveEmbeddedHostOffset()){
+        if (!isEmbedded) return;
+        const normalizedOffset = Math.max(0, Math.round(offset));
+        root.style.setProperty('--embed-host-offset', `${normalizedOffset}px`);
+        scheduleMapReflow({ refit: shouldAutoRefitViewport() });
+      }
+
+      window.addEventListener('message', (event) => {
+        if (!isEmbedded) return;
+        const data = event?.data;
+        if (!data || typeof data !== 'object') return;
+        if (data.type !== 'setHostBannerOffset') return;
+        const offset = Number(data.offset);
+        if (!Number.isFinite(offset)) return;
+        applyEmbeddedHostOffset(offset);
+      });
+
+      let initialBounds = null;
+      function fitToInitialBounds(options = {}){
+        if (!initialBounds) return;
+        if (isPhoneView() && !isMapVisibleToUser()) return;
+        const padding = getDynamicFitPadding();
+        map.fitBounds(initialBounds, {
+          padding,
+          duration: options.duration ?? 0,
+          easing: t => t
+        });
+        if (isPhoneView()) {
+          phoneViewportUserAdjusted = false;
+        }
+      }
+
+      function getPaddedMapBounds(bounds, ratio = 0.04){
+        if (!bounds || typeof bounds.getSouthWest !== 'function' || typeof bounds.getNorthEast !== 'function') {
+          return bounds;
+        }
+        const southWest = bounds.getSouthWest();
+        const northEast = bounds.getNorthEast();
+        const lngPadding = (northEast.lng - southWest.lng) * ratio;
+        const latPadding = (northEast.lat - southWest.lat) * ratio;
+        return [
+          [southWest.lng - lngPadding, southWest.lat - latPadding],
+          [northEast.lng + lngPadding, northEast.lat + latPadding]
+        ];
+      }
+      const debouncedRefit = debounce(() => fitToInitialBounds({ duration: 0 }), 120);
+
+      function shouldAutoRefitViewport(){
+        return !(isPhoneView() && phoneViewportUserAdjusted);
+      }
+
+      let reflowScheduled = false;
+      let refitScheduled = false;
+      function scheduleMapReflow({ refit = false } = {}){
+        if (refit) refitScheduled = true;
+        if (reflowScheduled) return;
+        reflowScheduled = true;
+        requestAnimationFrame(() => {
+          reflowScheduled = false;
+          map.resize();
+          if (refitScheduled) {
+            refitScheduled = false;
+            debouncedRefit();
+          }
+        });
+      }
+
+      function clearLabels(){
+        while(labelMarkers.length){
+          const entry = labelMarkers.pop();
+          if (entry?.marker) entry.marker.remove();
+        }
+      }
+      function addLabels(features){
+        clearLabels();
+        if (!isDesktopView() || !Array.isArray(features)) return;
+
+        const allLabels = features
+          .filter(f => f?.properties?.label && f.properties.label !== 'River Thames')
+          .map(feature => ({ feature, area: featureArea(feature.geometry) }))
+          .sort((a, b) => b.area - a.area);
+
+        allLabels.forEach(({ feature }) => {
+          const coords = getFeatureLabelCenter(feature.geometry);
+          if (!coords || !Number.isFinite(coords[0]) || !Number.isFinite(coords[1])) return;
+          const el = document.createElement('div');
+          el.className = 'polygon-label';
+          el.innerHTML = formatLabelText(feature.properties.label).replace(/\n/g, '<br>');
+          if (activeHoverLabel === feature.properties.label) {
+            el.style.opacity = '0';
+          }
+          const marker = new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(coords).addTo(map);
+          labelMarkers.push({ label: feature.properties.label, marker });
+        });
+
+        updateLabelCollisionScaling();
+      }
+
+      const refreshLabels = debounce(() => {
+        if (!geojsonFeatures || !isDesktopView()) return;
+        requestAnimationFrame(() => addLabels(geojsonFeatures));
+      }, 80);
+
+      function syncPhoneInteractions(){
+        const isPhone = isPhoneView();
+        if (isPhone){
+          if (phoneInteractionSnapshot === null) {
+            phoneInteractionSnapshot = mapInteractionsEnabled;
+          }
+          setMapInteractions(true);
+          if (initialBounds) {
+            map.setMaxBounds(getPaddedMapBounds(initialBounds));
+          }
+          return;
+        }
+
+        if (phoneInteractionSnapshot !== null) {
+          setMapInteractions(phoneInteractionSnapshot);
+          phoneInteractionSnapshot = null;
+        }
+        map.setMaxBounds(null);
+      }
+
+      function getFeatureAtPoint(point){
+        if (!point) return null;
+        const features = map.queryRenderedFeatures(point, { layers: ['subdistrict-fills'] });
+        return features[0] || null;
+      }
+
+      function activateFeature(feature){
+        if (!feature) {
+          removeHover();
+          return;
+        }
+
+        const label = feature.properties.label;
+        const targetUrl = labelToUrl[label];
+        if (targetUrl) {
+          openDashboardUrl(targetUrl);
+          return;
+        }
+
+        const id = feature.id || feature.properties.fid || label;
+        if (hoveredId !== id) {
+          if (hoveredId) setHover(hoveredId, false);
+          hoveredId = id;
+          setHover(hoveredId, true);
+        }
+
+        const center = getFeatureLabelCenter(feature.geometry);
+        if (label && label !== activeHoverLabel) {
+          if (activeHoverLabel) setLabelVisibility(activeHoverLabel, true);
+          setLabelVisibility(label, false);
+          activeHoverLabel = label;
+        }
+        clearTimeout(hoverLeaveTimer);
+        showPopup(center, label);
+        clearTimeout(popupTimer);
+        if (!isPhoneView()) {
+          popupTimer = setTimeout(removeHover, 2500);
+        }
+      }
+
+      map.on('movestart', function (event) {
+        if (!isPhoneView()) return;
+        if (event?.originalEvent) {
+          phoneViewportUserAdjusted = true;
+        }
+      });
+
+      mapContainer.addEventListener('touchstart', function (event) {
+        if (!isEmbeddedPhoneView()) return;
+        if (event.touches.length === 1) {
+          event.preventDefault();
+        }
+      }, { passive: false, capture: true });
+
+      mapContainer.addEventListener('touchmove', function (event) {
+        if (!isEmbeddedPhoneView()) return;
+        event.preventDefault();
+      }, { passive: false, capture: true });
+
+      function syncDesktopMode(){
+        const desktop = isDesktopView();
+        document.body.classList.toggle('is-desktop', desktop);
+        if (!desktop){
+          clearLabels();
+          return;
+        }
+        refreshLabels();
+      }
+
+      syncHeroLede();
+      updateDynamicLabelSize();
+
+      // Keep map sized & fitted when UI changes
+      new ResizeObserver(() => { scheduleMapReflow({ refit: shouldAutoRefitViewport() }); syncDesktopMode(); syncPhoneInteractions(); syncHeroLede(); updateDynamicLabelSize(); }).observe(mapContainer);
+      window.addEventListener('resize', () => { applyEmbeddedHostOffset(); syncDesktopMode(); syncPhoneInteractions(); syncHeroLede(); updateDynamicLabelSize(); });
+      window.addEventListener('orientationchange', () => {
+        applyEmbeddedHostOffset();
+        phoneViewportUserAdjusted = false;
+        scheduleMapReflow({ refit: true });
+        syncDesktopMode();
+        syncPhoneInteractions();
+        syncHeroLede();
+        updateDynamicLabelSize();
+      });
+      map.on('resize', () => { refreshLabels(); updateLabelCollisionScaling(); });
+      map.on('moveend', () => { updateLabelCollisionScaling(); });
+      map.on('zoomend', () => { updateLabelCollisionScaling(); });
+      if (desktopMedia.addEventListener) {
+        desktopMedia.addEventListener('change', () => { syncDesktopMode(); syncHeroLede(); });
+      } else if (desktopMedia.addListener) {
+        desktopMedia.addListener(() => { syncDesktopMode(); syncHeroLede(); });
+      }
+      if (phoneMedia.addEventListener) {
+        phoneMedia.addEventListener('change', () => { syncPhoneInteractions(); syncHeroLede(); });
+      } else if (phoneMedia.addListener) {
+        phoneMedia.addListener(() => { syncPhoneInteractions(); syncHeroLede(); });
+      }
+
+      function applyHeaderOffset(){
+        const height = headerEl ? Math.max(0, Math.round(headerEl.getBoundingClientRect().height || 0)) : 0;
+        if (height !== cachedHeaderHeight){
+          cachedHeaderHeight = height;
+          root.style.setProperty('--header-h', `${height}px`);
+          scheduleMapReflow({ refit: true });
+          syncDesktopMode();
+        }
+      }
+
+      async function updateHeaderHeight(){
+        if (document.fonts && document.fonts.ready) {
+          try { await document.fonts.ready; } catch(e){}
+        }
+        const h = headerEl ? Math.ceil(headerEl.getBoundingClientRect().height || 0) : 0;
+        cachedHeaderHeight = h;
+        applyHeaderOffset();
+      }
+
+      function updateMarqueeHeight(){
+        const h = logoMarqueeEl ? Math.ceil(logoMarqueeEl.getBoundingClientRect().height || 0) : 0;
+        root.style.setProperty('--marquee-h', h + 'px');
+        scheduleMapReflow({ refit: true });
+        syncDesktopMode();
+      }
+
+      applyEmbeddedHostOffset();
+      updateHeaderHeight();
+      updateMarqueeHeight();
+      if (headerEl) {
+        const headerRO = new ResizeObserver(() => updateHeaderHeight());
+        headerRO.observe(headerEl);
+      }
+      if (logoMarqueeEl) {
+        const marqueeRO = new ResizeObserver(() => updateMarqueeHeight());
+        marqueeRO.observe(logoMarqueeEl);
+      }
+      map.once('load', () => scheduleMapReflow({ refit: false }));
+      map.on('error', (e) => {
+        if (e?.sourceId === 'subdistricts' || e?.error?.message?.includes('subdistricts')) {
+          showMapError();
+        }
+      });
+
+      function bootMapData(){
+        showMapLoading();
+        var cacheBuster = '?v=' + Date.now();
+        var localUrl = 'final_poly.geojson' + cacheBuster;
+        var remoteUrl = 'https://raw.githubusercontent.com/CharlieCoughlin1/Central_London_Submarkets/main/final_poly.geojson' + cacheBuster;
+
+        fetch(localUrl)
+          .then(function (response) {
+            if (!response.ok) { throw new Error('Network response was not ok'); }
+            return response.json();
+          })
+          .catch(function () {
+            return fetch(remoteUrl).then(function (response) {
+              if (!response.ok) { throw new Error('Network response was not ok'); }
+              return response.json();
+            });
+          })
+          .then(function (data) {
+            // Ensure stable, UNIQUE feature IDs.
+            // Do NOT use properties.label as the id because labels are user-facing and can be edited/duplicated,
+            // which can cause MapLibre to reject the GeoJSON source (blank map).
+            (data.features || []).forEach(function (feature, idx) {
+              if (!feature.properties) feature.properties = {};
+
+              // Create a dedicated internal feature id (fid) if one doesn't exist.
+              // Using the index ensures uniqueness even if labels collide.
+              if (!feature.properties.fid) {
+                feature.properties.fid = 'sm_' + idx;
+              }
+
+              // Set the GeoJSON feature.id to match fid as well (helps when inspecting geojsonFeatures later).
+              feature.id = feature.properties.fid;
+            });
+
+            // Hot-reload / double-init guard: remove existing layers + source if present.
+            // (This prevents "Source already exists" / "Layer already exists" issues in some build setups.)
+            const existingLayers = [
+              'subdistrict-hover-outline',
+              'subdistrict-hover-halo',
+              'subdistrict-fills',
+              'thames-outline',
+              'thames-fill'
+            ];
+            for (let i = existingLayers.length - 1; i >= 0; i -= 1){
+              const layerId = existingLayers[i];
+              if (map.getLayer(layerId)) map.removeLayer(layerId);
+            }
+            if (map.getSource('subdistricts')) map.removeSource('subdistricts');
+
+            map.addSource('subdistricts', {
+              type: 'geojson',
+              data: data,
+              maxzoom: 22,
+              // Promote the NEW unique id property, not the label.
+              promoteId: 'fid'
+            });
+
+            // Thames
+            map.addLayer({
+              id: 'thames-fill',
+              type: 'fill',
+              source: 'subdistricts',
+              filter: ['==', ['get', 'label'], 'River Thames'],
+              paint: {
+                'fill-color': water,
+                'fill-outline-color': 'rgba(0,0,0,0)',
+                'fill-opacity': 1
+              }
+            });
+
+            map.addLayer({
+              id: 'thames-outline',
+              type: 'line',
+              source: 'subdistricts',
+              filter: ['==', ['get', 'label'], 'River Thames'],
+              paint: {
+                'line-color': waterStroke,
+                'line-width': 1.2,
+                'line-join': 'round',
+                'line-cap': 'round',
+                'line-smooth': 0.6
+              }
+            });
+
+            // Fills
+            map.addLayer({
+              id: 'subdistrict-fills',
+              type: 'fill',
+              source: 'subdistricts',
+              filter: ['!=', ['get', 'label'], 'River Thames'],
+              paint: {
+                'fill-color': getBaseFillColorExpression(),
+                'fill-outline-color': '#B6BCC6',
+                'fill-opacity': 1
+              }
+            });
+
+            // Hover halo + outline
+            map.addLayer({
+              id: 'subdistrict-hover-halo',
+              type: 'line',
+              source: 'subdistricts',
+              filter: ['!=', ['get', 'label'], 'River Thames'],
+              paint: {
+                'line-color': '#000',
+                'line-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 0.06, 0],
+                'line-width': ['case', ['boolean', ['feature-state', 'hover'], false], 4, 0],
+                'line-blur': 0.8
+              },
+              layout: { 'line-join': 'round', 'line-cap': 'round' }
+            });
+
+            map.addLayer({
+              id: 'subdistrict-hover-outline',
+              type: 'line',
+              source: 'subdistricts',
+              filter: ['!=', ['get', 'label'], 'River Thames'],
+              paint: {
+                'line-color': brand,
+                'line-width': ['case', ['boolean', ['feature-state', 'hover'], false], 2, 0],
+                'line-opacity': 1,
+                'line-blur': 0
+              },
+              layout: { 'line-join': 'round', 'line-cap': 'round' }
+            });
+
+            // Compute initial bounds (excluding Thames)
+            var bounds = new maplibregl.LngLatBounds();
+            data.features.forEach(function (feature) {
+              if (feature.properties.label === 'River Thames') return;
+              var coords = feature.geometry.coordinates.flat(Infinity);
+              for (var i = 0; i < coords.length; i += 2) {
+                bounds.extend([coords[i], coords[i + 1]]);
+              }
+            });
+            initialBounds = bounds;
+            fitToInitialBounds({ duration: 0 });
+            geojsonFeatures = data.features;
+            syncDesktopMode();
+            syncPhoneInteractions();
+            map.once('idle', () => { hideMapStatus(); });
+
+            if (!mapEventsBound) {
+              mapEventsBound = true;
+              // Interaction (hover shows popup; no persistent labels)
+              function handleMove(e) {
+                if (isPhoneView()) return;
+                const features = map.queryRenderedFeatures(e.point, { layers: ['subdistrict-fills'] });
+                const feature = features[0];
+                if (!feature) {
+                  map.getCanvas().style.cursor = 'default';
+                  scheduleClearHover();
+                  return;
+                }
+
+                clearTimeout(hoverLeaveTimer);
+                map.getCanvas().style.cursor = 'pointer';
+                const id = feature.id || feature.properties.fid || feature.properties.label;
+                if (hoveredId !== id) {
+                  if (hoveredId) setHover(hoveredId, false);
+                  hoveredId = id;
+                  setHover(hoveredId, true);
+                }
+
+                const center = getFeatureLabelCenter(feature.geometry);
+                const label = feature.properties.label;
+                if (label && label !== activeHoverLabel) {
+                  if (activeHoverLabel) setLabelVisibility(activeHoverLabel, true);
+                  setLabelVisibility(label, false);
+                  activeHoverLabel = label;
+                }
+                showPopup(center, label);
+              }
+
+              let pendingMove = false;
+              let lastMoveEvent = null;
+              map.on('mousemove', function (e) {
+                lastMoveEvent = e;
+                if (!pendingMove) {
+                  pendingMove = true;
+                  requestAnimationFrame(function () {
+                    pendingMove = false;
+                    handleMove(lastMoveEvent);
+                  });
+                }
+              });
+
+              map.on('click', function (e) {
+                if (isPhoneView() && Date.now() - lastTouchActivationAt < 450) return;
+                activateFeature(getFeatureAtPoint(e.point));
+              });
+
+              function handlePhoneGestureStart(clientX, clientY) {
+                touchStartPoint = { x: clientX, y: clientY };
+                touchMovedDuringGesture = false;
+              }
+
+              function handlePhoneGestureMove(clientX, clientY) {
+                if (!touchStartPoint) return;
+                const dx = clientX - touchStartPoint.x;
+                const dy = clientY - touchStartPoint.y;
+                if ((dx * dx) + (dy * dy) > 81) {
+                  touchMovedDuringGesture = true;
+                }
+              }
+
+              function handlePhoneGestureEnd(clientX, clientY) {
+                if (!touchStartPoint || touchMovedDuringGesture) {
+                  touchStartPoint = null;
+                  touchMovedDuringGesture = false;
+                  return;
+                }
+                const canvasRect = map.getCanvas().getBoundingClientRect();
+                const point = {
+                  x: clientX - canvasRect.left,
+                  y: clientY - canvasRect.top
+                };
+
+                activateFeature(getFeatureAtPoint(point));
+                lastTouchActivationAt = Date.now();
+                touchStartPoint = null;
+                touchMovedDuringGesture = false;
+              }
+
+              const supportsPointerEvents = 'PointerEvent' in window;
+
+              if (supportsPointerEvents) {
+                mapContainer.addEventListener('pointerdown', function (event) {
+                  if (!isPhoneView() || event.pointerType !== 'touch') return;
+                  handlePhoneGestureStart(event.clientX, event.clientY);
+                }, { passive: true, capture: true });
+
+                mapContainer.addEventListener('pointermove', function (event) {
+                  if (!isPhoneView() || event.pointerType !== 'touch') return;
+                  handlePhoneGestureMove(event.clientX, event.clientY);
+                }, { passive: true, capture: true });
+
+                mapContainer.addEventListener('pointerup', function (event) {
+                  if (!isPhoneView() || event.pointerType !== 'touch') return;
+                  handlePhoneGestureEnd(event.clientX, event.clientY);
+                }, { passive: true, capture: true });
+
+                mapContainer.addEventListener('pointercancel', function () {
+                  touchStartPoint = null;
+                  touchMovedDuringGesture = false;
+                }, { passive: true, capture: true });
+              } else {
+                mapContainer.addEventListener('touchstart', function (event) {
+                  if (!isPhoneView()) return;
+                  if (event.touches.length !== 1) {
+                    touchStartPoint = null;
+                    touchMovedDuringGesture = true;
+                    return;
+                  }
+                  const touch = event.touches[0];
+                  handlePhoneGestureStart(touch.clientX, touch.clientY);
+                }, { passive: true, capture: true });
+
+                mapContainer.addEventListener('touchmove', function (event) {
+                  if (!isPhoneView() || !event.touches.length) return;
+                  const touch = event.touches[0];
+                  handlePhoneGestureMove(touch.clientX, touch.clientY);
+                }, { passive: true, capture: true });
+
+                mapContainer.addEventListener('touchend', function (event) {
+                  if (!isPhoneView() || event.changedTouches.length !== 1) return;
+                  const touch = event.changedTouches[0];
+                  handlePhoneGestureEnd(touch.clientX, touch.clientY);
+                }, { passive: true, capture: true });
+              }
+            }
+          })
+          .catch(function (error) {
+            console.error('Error loading GeoJSON:', error);
+            showMapError();
+          });
+      }
+
+      if (map.isStyleLoaded()) {
+        bootMapData();
+      } else {
+        map.once('style.load', bootMapData);
+      }
+
+      /* === Rents Table: populate + panel behavior === */
+      const tableState = { sortKey: 'priceA', direction: 'desc', filterText: '', selectedSubmarket: '' };
+
+      function trackMetric(range, key, value){
+        if (!Number.isFinite(value)) return;
+        if (!range[key]){
+          range[key] = { min: value, max: value };
+          return;
+        }
+        range[key].min = Math.min(range[key].min, value);
+        range[key].max = Math.max(range[key].max, value);
+      }
+
+      const heatmapRanges = submarketData.reduce((acc, entry) => {
+        trackMetric(acc, 'priceA', entry.gradeA?.primeRent);
+        trackMetric(acc, 'totalCostA', entry.gradeA?.totalCost);
+        trackMetric(acc, 'changeA', entry.gradeA?.change);
+        trackMetric(acc, 'priceB', entry.gradeB?.primeRent);
+        trackMetric(acc, 'totalCostB', entry.gradeB?.totalCost);
+        trackMetric(acc, 'changeB', entry.gradeB?.change);
+        return acc;
+      }, {});
+
+      const changeRange = (() => {
+        const changeA = heatmapRanges.changeA;
+        const changeB = heatmapRanges.changeB;
+        if (!changeA && !changeB) return null;
+        const min = Math.min(changeA?.min ?? Infinity, changeB?.min ?? Infinity);
+        const max = Math.max(changeA?.max ?? -Infinity, changeB?.max ?? -Infinity);
+        return { min, max };
+      })();
+
+      if (changeRange) {
+        heatmapRanges.changeA = changeRange;
+        heatmapRanges.changeB = changeRange;
+      }
+
+      function hexToRgb(hex){
+        const normalized = hex.replace('#', '');
+        const bigint = parseInt(normalized.length === 3 ? normalized.split('').map(c => c + c).join('') : normalized, 16);
+        if (Number.isNaN(bigint)) return { r: 199, g: 42, b: 59 };
+        return { r: (bigint >> 16) & 255, g: (bigint >> 8) & 255, b: bigint & 255 };
+      }
+
+      function mixWithBlack(color, weight){
+        const { r, g, b } = hexToRgb(color);
+        const ratio = Math.min(Math.max(weight, 0), 1);
+        const mix = (channel) => Math.round(channel * (1 - ratio));
+        return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
+      }
+
+      function mixWithWhite(color, weight){
+        const { r, g, b } = hexToRgb(color);
+        const ratio = Math.min(Math.max(weight, 0), 1);
+        const mix = (channel) => Math.round(channel + ((255 - channel) * ratio));
+        return `rgb(${mix(r)}, ${mix(g)}, ${mix(b)})`;
+      }
+
+      function getChangeHeatColor(value, range, baseColor){
+        if (!range || !Number.isFinite(value)) return '';
+        if (Math.abs(value) < 0.0001) return mixWithBlack(baseColor, 0);
+
+        if (value > 0){
+          const maxPositive = Math.max(range.max, 0.0001);
+          const normalized = Math.min(value / maxPositive, 1);
+          return mixWithBlack(baseColor, normalized * 0.42);
+        }
+
+        const maxNegativeMagnitude = Math.max(Math.abs(Math.min(range.min, 0)), 0.0001);
+        const normalized = Math.min(Math.abs(value) / maxNegativeMagnitude, 1);
+        return mixWithWhite(baseColor, normalized * 0.38);
+      }
+
+      function getHeatColor(value, range, baseColor){
+        if (!range || !Number.isFinite(value)) return '';
+        const spread = Math.max(range.max - range.min, 0.0001);
+        const normalized = Math.min(Math.max((value - range.min) / spread, 0), 1);
+        const weight = normalized * 0.42;
+        return mixWithBlack(baseColor, weight);
+      }
+
+      const heatPalette = {
+        priceA: heatColorA,
+        totalCostA: heatColorA,
+        changeA: heatColorA,
+        priceB: heatColorB,
+        totalCostB: heatColorB,
+        changeB: heatColorB
+      };
+
+      function getRelativeLuminance(color){
+        if (!color) return 1;
+        const rgb = color.replace(/rgb\(|\)/g, '').split(',').map(v => parseFloat(v.trim()) / 255);
+        if (rgb.some(v => Number.isNaN(v))) return 1;
+        const [r, g, b] = rgb.map(v => {
+          return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      }
+
+      function clearHeatmapStyles(cell){
+        cell.classList.remove('heat-cell');
+        cell.style.removeProperty('--heat-bg');
+        cell.style.background = '';
+        cell.style.color = '';
+        cell.style.textShadow = '';
+      }
+
+      function applyHeatmap(cell, value, key){
+        clearHeatmapStyles(cell);
+        if (!heatmapEnabled) return;
+        const color = heatPalette[key];
+        const range = heatmapRanges[key];
+        const shade = color
+          ? (key === 'changeA' || key === 'changeB'
+            ? getChangeHeatColor(value, range, color)
+            : getHeatColor(value, range, color))
+          : '';
+        if (shade){
+          cell.classList.add('heat-cell');
+          cell.style.setProperty('--heat-bg', shade);
+          cell.style.background = shade;
+          const lum = getRelativeLuminance(shade);
+          cell.style.color = lum < 0.4 ? '#FFFFFF' : '#0F172A';
+        }
+      }
+
+      function getTableRows(){
+        return submarketData.map(entry => ({
+          submarket: entry.label,
+          url: labelToUrl[entry.label] || '',
+          priceAText: formatCurrency(entry.gradeA?.primeRent),
+          priceA: entry.gradeA?.primeRent ?? null,
+          totalCostAText: formatCurrency(entry.gradeA?.totalCost),
+          totalCostA: entry.gradeA?.totalCost ?? null,
+          changeAText: formatPercent(entry.gradeA?.change),
+          changeA: entry.gradeA?.change ?? null,
+          priceBText: formatCurrency(entry.gradeB?.primeRent),
+          priceB: entry.gradeB?.primeRent ?? null,
+          totalCostBText: formatCurrency(entry.gradeB?.totalCost),
+          totalCostB: entry.gradeB?.totalCost ?? null,
+          changeBText: formatPercent(entry.gradeB?.change),
+          changeB: entry.gradeB?.change ?? null
+        }));
+      }
+
+      function applySort(rows){
+        const dir = tableState.direction === 'desc' ? -1 : 1;
+        const key = tableState.sortKey;
+
+        return rows.sort((a, b) => {
+          let cmp = 0;
+          const aVal = a[key];
+          const bVal = b[key];
+
+          if (typeof aVal === 'number' && typeof bVal === 'number') {
+            cmp = aVal === bVal ? 0 : (aVal < bVal ? -1 : 1);
+          } else if (typeof aVal === 'string' && typeof bVal === 'string') {
+            cmp = aVal.localeCompare(bVal);
+          } else if (aVal == null && bVal == null) {
+            cmp = 0;
+          } else if (aVal == null) {
+            cmp = 1;
+          } else if (bVal == null) {
+            cmp = -1;
+          } else {
+            cmp = aVal < bVal ? -1 : 1;
+          }
+          return cmp * dir;
+        });
+      }
+
+      function updateSortIndicators(){
+        document.querySelectorAll('.sort-button').forEach(btn => {
+          const key = btn.getAttribute('data-sort');
+          const th = btn.closest('th');
+          const indicator = btn.querySelector('.sort-indicator');
+          const isActive = key === tableState.sortKey;
+          const dir = tableState.direction;
+
+          const ariaValue = isActive ? (dir === 'desc' ? 'descending' : 'ascending') : 'none';
+          btn.setAttribute('aria-sort', ariaValue);
+          if (th) th.setAttribute('aria-sort', ariaValue);
+          if (indicator) indicator.textContent = isActive ? (dir === 'desc' ? '↓' : '↑') : '⇅';
+        });
+      }
+
+      function enforceVisibleRows(){
+        const scroller = document.querySelector('.table-scroller');
+        if (!scroller) return;
+        scroller.style.maxHeight = '';
+      }
+
+      function syncHeatmapMode(){
+        const next = shouldEnableHeatmap();
+        if (next === heatmapEnabled) return;
+        heatmapEnabled = next;
+        renderTable();
+      }
+
+      const debouncedTableResize = (() => {
+        let timer = null;
+        return () => {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            syncHeatmapMode();
+            enforceVisibleRows();
+          }, 140);
+        };
+      })();
+
+      function renderTable(){
+        const tbody = document.querySelector('#rents-table tbody');
+        if (!tbody) return;
+        const frag = document.createDocumentFragment();
+        const selectedSubmarket = (tableState.selectedSubmarket || '').trim();
+        const filterText = (tableState.filterText || '').trim().toLowerCase();
+        let rows = getTableRows();
+        if (selectedSubmarket) {
+          rows = rows.filter(row => row.submarket === selectedSubmarket);
+        } else if (filterText) {
+          rows = rows.filter(row => row.submarket.toLowerCase().includes(filterText));
+        }
+        rows = applySort(rows);
+
+          rows.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.dataset.label = row.submarket;
+
+            const tdLabel = document.createElement('td');
+            tdLabel.className = 'row-label';
+            tdLabel.dataset.title = 'Submarket';
+            const labelWrap = document.createElement('span');
+            labelWrap.className = 'row-label-inner';
+            if (row.url){
+              const a = document.createElement('a');
+              a.href = row.url;
+              const openInSameTab = shouldUseSameTabNavigation();
+              a.target = openInSameTab ? '_self' : '_blank';
+              if (!openInSameTab) {
+                a.rel = 'noopener';
+              }
+              a.addEventListener('click', (event) => {
+                if (!shouldShowLinkedInBlocker()) return;
+                event.preventDefault();
+                showBrowserHelp();
+              });
+              const linkLabel = document.createElement('span');
+              linkLabel.textContent = row.submarket;
+              const linkCta = document.createElement('span');
+              linkCta.className = 'dashboard-link-cta';
+              linkCta.setAttribute('aria-hidden', 'true');
+              linkCta.textContent = 'Open dashboard';
+              a.append(linkLabel, linkCta);
+              a.title = `Open ${row.submarket} dashboard`;
+              labelWrap.appendChild(a);
+            } else {
+              const span = document.createElement('span');
+              span.textContent = row.submarket;
+              span.className = 'no-link';
+              labelWrap.appendChild(span);
+            }
+            tdLabel.appendChild(labelWrap);
+
+            const tdA = document.createElement('td');
+            tdA.className = 'col-grade-a numeric';
+            tdA.dataset.title = 'Grade A prime rent (psf)';
+            tdA.textContent = row.priceAText;
+
+            const tdTotalA = document.createElement('td');
+            tdTotalA.className = 'col-grade-a numeric';
+            tdTotalA.dataset.title = 'Grade A total cost (psf)';
+            tdTotalA.textContent = row.totalCostAText;
+
+            const tdChangeA = document.createElement('td');
+            tdChangeA.className = 'col-grade-a numeric';
+            tdChangeA.dataset.title = 'Grade A 12-m change';
+            tdChangeA.textContent = row.changeAText;
+            applyHeatmap(tdChangeA, row.changeA, 'changeA');
+
+            const tdB = document.createElement('td');
+            tdB.className = 'col-grade-b numeric';
+            tdB.dataset.title = 'Grade B prime rent (psf)';
+            tdB.textContent = row.priceBText;
+
+            const tdTotalB = document.createElement('td');
+            tdTotalB.className = 'col-grade-b numeric';
+            tdTotalB.dataset.title = 'Grade B total cost (psf)';
+            tdTotalB.textContent = row.totalCostBText;
+
+            const tdChangeB = document.createElement('td');
+            tdChangeB.className = 'col-grade-b numeric';
+            tdChangeB.dataset.title = 'Grade B 12-m change';
+            tdChangeB.textContent = row.changeBText;
+            applyHeatmap(tdChangeB, row.changeB, 'changeB');
+
+            tr.appendChild(tdLabel);
+            tr.appendChild(tdA);
+            tr.appendChild(tdTotalA);
+            tr.appendChild(tdChangeA);
+            tr.appendChild(tdB);
+            tr.appendChild(tdTotalB);
+            tr.appendChild(tdChangeB);
+            frag.appendChild(tr);
+          });
+        if (!rows.length) {
+          const emptyRow = document.createElement('tr');
+          emptyRow.className = 'empty-row';
+          const emptyCell = document.createElement('td');
+          emptyCell.colSpan = 7;
+          emptyCell.className = 'empty-cell';
+          emptyCell.textContent = 'No submarkets match your search.';
+          emptyRow.appendChild(emptyCell);
+          frag.appendChild(emptyRow);
+        }
+        tbody.innerHTML = '';
+        tbody.appendChild(frag);
+        requestAnimationFrame(enforceVisibleRows);
+      }
+
+      function setupSorting(){
+        document.querySelectorAll('.sort-button').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const key = btn.getAttribute('data-sort');
+            if (!key) return;
+            if (tableState.sortKey === key) {
+              tableState.direction = tableState.direction === 'desc' ? 'asc' : 'desc';
+            } else {
+              tableState.sortKey = key;
+              tableState.direction = key === 'submarket' ? 'asc' : 'desc';
+            }
+            updateSortIndicators();
+            renderTable();
+          });
+        });
+        updateSortIndicators();
+      }
+
+      function setupTableSearch(){
+        const wrapper = document.querySelector('.table-search');
+        const comboboxWrap = document.querySelector('.table-search-combobox');
+        const input = document.getElementById('table-search-input');
+        const clearBtn = document.getElementById('table-search-clear');
+        const toggleBtn = document.getElementById('submarket-dropdown-toggle');
+        const dropdown = document.getElementById('submarket-dropdown');
+        if (!wrapper || !comboboxWrap || !input || !clearBtn || !toggleBtn || !dropdown) return;
+
+        const allSubmarkets = submarketData.map(entry => entry.label).sort((a, b) => a.localeCompare(b));
+        let activeIndex = -1;
+        let selectedSubmarket = '';
+
+        const updateToggleIcon = () => {
+          toggleBtn.textContent = dropdown.hidden ? '▼' : '▲';
+          toggleBtn.setAttribute('aria-label', dropdown.hidden ? 'Show submarket options' : 'Hide submarket options');
+        };
+
+        const getOrderedSubmarkets = () => {
+          const query = (input.value || '').trim().toLowerCase();
+          const shouldShowAllSubmarkets = selectedSubmarket && query === selectedSubmarket.toLowerCase();
+          const filtered = query && !shouldShowAllSubmarkets
+            ? allSubmarkets.filter(label => label.toLowerCase().includes(query))
+            : [...allSubmarkets];
+
+          if (!selectedSubmarket) return filtered;
+          const selectedIndex = filtered.indexOf(selectedSubmarket);
+          if (selectedIndex <= 0) return filtered;
+          const [selected] = filtered.splice(selectedIndex, 1);
+          filtered.unshift(selected);
+          return filtered;
+        };
+
+        const updateClearState = () => {
+          clearBtn.disabled = !input.value;
+        };
+
+        const setDropdownOpen = (isOpen) => {
+          wrapper.classList.toggle('is-open', isOpen);
+          dropdown.hidden = !isOpen;
+          input.setAttribute('aria-expanded', String(isOpen));
+          if (!isOpen) {
+            activeIndex = -1;
+            input.removeAttribute('aria-activedescendant');
+          }
+          updateToggleIcon();
+        };
+
+        const renderDropdown = () => {
+          const options = getOrderedSubmarkets();
+          dropdown.innerHTML = '';
+
+          if (!options.length) {
+            const empty = document.createElement('p');
+            empty.className = 'table-search-option-empty';
+            empty.textContent = 'No submarkets match your search.';
+            dropdown.appendChild(empty);
+            activeIndex = -1;
+            input.removeAttribute('aria-activedescendant');
+            return;
+          }
+
+          options.forEach((label, index) => {
+            const option = document.createElement('button');
+            option.type = 'button';
+            option.role = 'option';
+            option.className = 'table-search-option';
+            option.id = `submarket-option-${index}`;
+            option.dataset.value = label;
+
+            const isSelected = label === selectedSubmarket;
+            const isActive = index === activeIndex;
+            option.setAttribute('aria-selected', String(isSelected));
+            if (isActive) {
+              option.classList.add('is-active');
+              input.setAttribute('aria-activedescendant', option.id);
+            }
+            if (isSelected) {
+              option.classList.add('is-selected');
+            }
+
+            const optionLabel = document.createElement('span');
+            optionLabel.className = 'table-search-option-label';
+            optionLabel.textContent = label;
+
+            const optionTag = document.createElement('span');
+            optionTag.className = 'table-search-option-tag';
+            optionTag.textContent = 'Selected';
+
+            option.appendChild(optionLabel);
+            option.appendChild(optionTag);
+
+            option.addEventListener('click', () => {
+              selectedSubmarket = label;
+              input.value = label;
+              tableState.filterText = label;
+              tableState.selectedSubmarket = label;
+              renderTable();
+              updateClearState();
+              activeIndex = 0;
+              renderDropdown();
+              setDropdownOpen(false);
+              input.focus();
+            });
+
+            dropdown.appendChild(option);
+          });
+        };
+
+        const applyFilter = debounce((value) => {
+          if (!value) {
+            activeIndex = selectedSubmarket ? 0 : -1;
+          } else {
+            activeIndex = -1;
+          }
+          input.removeAttribute('aria-activedescendant');
+          updateClearState();
+          renderDropdown();
+          setDropdownOpen(true);
+        }, 120);
+
+        const moveActiveOption = (direction) => {
+          const options = getOrderedSubmarkets();
+          if (!options.length) return;
+          activeIndex = Math.max(0, Math.min(options.length - 1, activeIndex + direction));
+          renderDropdown();
+          const active = dropdown.querySelector('.table-search-option.is-active');
+          if (active) active.scrollIntoView({ block: 'nearest' });
+        };
+
+        input.addEventListener('focus', () => {
+          renderDropdown();
+          setDropdownOpen(true);
+        });
+
+        input.addEventListener('input', (event) => {
+          const nextValue = event.target.value.trim();
+          if (!selectedSubmarket || nextValue !== selectedSubmarket) {
+            selectedSubmarket = '';
+            tableState.selectedSubmarket = '';
+          }
+          tableState.filterText = nextValue;
+          renderTable();
+          applyFilter(event.target.value.trim());
+        });
+
+        input.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            if (dropdown.hidden) {
+              renderDropdown();
+              setDropdownOpen(true);
+            }
+            moveActiveOption(1);
+          } else if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            moveActiveOption(-1);
+          } else if (event.key === 'Enter') {
+            if (dropdown.hidden) return;
+            const active = dropdown.querySelector('.table-search-option.is-active');
+            if (active) {
+              event.preventDefault();
+              active.click();
+            }
+          } else if (event.key === 'Escape') {
+            setDropdownOpen(false);
+          }
+        });
+
+        toggleBtn.addEventListener('click', () => {
+          const willOpen = dropdown.hidden;
+          if (willOpen) {
+            renderDropdown();
+            setDropdownOpen(true);
+            input.focus();
+            return;
+          }
+          setDropdownOpen(false);
+        });
+
+        clearBtn.addEventListener('click', () => {
+          selectedSubmarket = '';
+          tableState.selectedSubmarket = '';
+          input.value = '';
+          tableState.filterText = '';
+          renderTable();
+          updateClearState();
+          renderDropdown();
+          setDropdownOpen(true);
+          input.focus();
+        });
+
+        document.addEventListener('click', (event) => {
+          if (!comboboxWrap.contains(event.target)) {
+            setDropdownOpen(false);
+          }
+        });
+
+        updateClearState();
+        renderDropdown();
+        updateToggleIcon();
+      }
+
+      function buildRentsTable(){
+        renderTable();
+        setupSorting();
+        setupTableSearch();
+        window.addEventListener('resize', debouncedTableResize);
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(enforceVisibleRows).catch(() => {});
+        }
+        syncHeatmapMode();
+      }
+
+      function setupTableHover(){
+        /* Hover-linking between the table and map has been intentionally disabled. */
+      }
+
+      function setupPanel(){
+        const panel = document.getElementById('rents-panel');
+        const mapToggleBtn = document.querySelector('[data-action="show-map"]');
+        const dataToggleBtn = document.querySelector('[data-action="show-data"]');
+        const mapStage = document.getElementById('map-stage');
+
+        if (!panel || !dataView) return;
+
+        if (dataToggleBtn) {
+          dataToggleBtn.textContent = 'Compare office costs';
+        }
+
+        function scrollToEl(el){
+          if (!el) return;
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function syncHeroToggles(mode){
+          const isData = mode === 'data';
+          if (mapToggleBtn) {
+            mapToggleBtn.classList.toggle('is-active', !isData);
+            mapToggleBtn.setAttribute('aria-pressed', String(!isData));
+          }
+          if (dataToggleBtn) {
+            dataToggleBtn.classList.toggle('is-active', isData);
+            dataToggleBtn.setAttribute('aria-pressed', String(isData));
+          }
+        }
+
+        function detectActiveSection(){
+          const viewportMid = window.innerHeight * 0.5;
+          const dataRect = dataView.getBoundingClientRect();
+          const mapRect = (mapStage || mapContainer).getBoundingClientRect();
+          const isData = dataRect.top <= viewportMid && dataRect.bottom >= viewportMid;
+          const isMap = mapRect.top <= viewportMid && mapRect.bottom >= viewportMid;
+          const mode = isData ? 'data' : (isMap ? 'map' : 'map');
+          syncHeroToggles(mode);
+        }
+
+        if (mapToggleBtn) {
+          mapToggleBtn.addEventListener('click', () => scrollToEl(mapStage || mapContainer));
+        }
+
+        if (dataToggleBtn) {
+          dataToggleBtn.addEventListener('click', () => scrollToEl(dataView));
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') scrollToEl(mapStage || mapContainer);
+        });
+
+        detectActiveSection();
+        window.addEventListener('scroll', detectActiveSection, { passive: true });
+        window.addEventListener('resize', detectActiveSection);
+      }
+
+      /* === Client logos marquee ===
+         Uses locally bundled PNGs from "Client logos" and duplicates strip for seamless LTR scroll.
+      */
+      const LOGO_DIR = "Client logos";
+      const LOGO_FILES = [
+        'AJBell.png',
+        'Arrow.png',
+        'AtkinsRealis.png',
+        'Automata.png',
+        'AXA.png',
+        'Babcock.png',
+        'BBC (1).png',
+        'British Ecological Society.png',
+        'British Film Commission.png',
+        'CGI.png',
+        'Cranswick.png',
+        'CT Group.png',
+        'Dogs Trust.png',
+        'Evening Standard.png',
+        'Heineken.png',
+        'ITN.png',
+        'ITV.png',
+        'Macdonalds.png',
+        'Mencap.png',
+        'Nationwide.png',
+        'NHBC.png',
+        'Optiver.png',
+        'Orchard Theraputics.png',
+        'Pret.png',
+        'Ravensbourne.png',
+        'Softcat.png',
+        'Specsavers.png',
+        'Spectris.png',
+        'The Independent.png',
+        'University of Sutherland.png',
+        'William Reed.png'
+      ].filter(Boolean);
+
+      function deriveAltFromPath(path){
+        try {
+          const name = path.split('/').pop().split('.').slice(0,-1).join('.');
+          return name.replace(/[-_]+/g,' ').replace(/\s+/g,' ').trim() || 'Client logo';
+        } catch(e){ return 'Client logo'; }
+      }
+      function makeStrip(nodes){
+        const ul = document.createElement('ul');
+        ul.className = 'logo-strip';
+        nodes.forEach(n => ul.appendChild(n));
+        return ul;
+      }
+      function buildNodesFromList(list){
+        const nodes = [];
+        for (const obj of list){
+          const li = document.createElement('li');
+          const img = document.createElement('img');
+          img.loading = 'lazy';
+          img.decoding = 'async';
+          img.alt = obj.alt || deriveAltFromPath(obj.src);
+          img.src = obj.src;
+          img.addEventListener('load', () => { updateMarqueeHeight(); debouncedRefit(); }); // refit map when banner height settles
+          img.onerror = () => { li.remove(); updateMarqueeHeight(); debouncedRefit(); };
+          li.appendChild(img);
+          nodes.push(li);
+        }
+        return nodes;
+      }
+      function renderLogoMarqueeFromSrcs(srcs){
+        const track = document.getElementById('logo-track');
+        if (!track) return;
+        const marquee = logoMarqueeEl;
+
+        const list = srcs
+          .filter(src => /\.png$/i.test(src))
+          .sort((a,b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+          .map(src => ({ src, alt: deriveAltFromPath(src) }));
+
+        const nodes = buildNodesFromList(list);
+        track.innerHTML = '';
+
+        if (!nodes.length){
+          track.appendChild(makeStrip([]));
+          track.appendChild(makeStrip([]));
+          track.style.animationPlayState = 'paused';
+          if (marquee){
+            marquee.classList.add('is-ready');
+            marquee.classList.add('is-empty');
+          }
+          updateMarqueeHeight();
+          debouncedRefit();
+          return;
+        }
+
+        track.appendChild(makeStrip(nodes));
+        track.appendChild(makeStrip(nodes.map(n => n.cloneNode(true))));
+        track.style.animationPlayState = 'running';
+        if (marquee){
+          marquee.classList.add('is-ready');
+          marquee.classList.remove('is-empty');
+        }
+
+        updateMarqueeHeight();
+        setTimeout(() => debouncedRefit(), 250);
+      }
+      async function initLogos(){
+        const srcs = LOGO_FILES.map(name => `${LOGO_DIR}/${encodeURIComponent(name)}`);
+        renderLogoMarqueeFromSrcs(srcs);
+      }
+
+      const HEADLINE_EVENTS = [
+        {
+          description: 'BP relocating its global headquarters to Bankside, leasing',
+          size: '192,000 sq ft',
+          building: 'Ink, Timber Square, SE1'
+        },
+        {
+          description: 'Anthropic expanding its London headquarters at Regent\'s Place, leasing',
+          size: '158,000 sq ft',
+          building: 'One Triton Square, NW1'
+        },
+        {
+          description: 'OpenAI taking its first permanent London office, leasing',
+          size: '88,500 sq ft',
+          building: 'Jahn Court & Brassworks, N1'
+        }
+      ];
+
+      function initHeadlineRotator(){
+        const rotator = document.getElementById('headline-rotator');
+        const descriptionEl = document.getElementById('headline-description');
+        const sizeEl = document.getElementById('headline-size');
+        const buildingEl = document.getElementById('headline-building');
+        if (!rotator || !descriptionEl || !sizeEl || !buildingEl || HEADLINE_EVENTS.length < 2) return;
+
+        let currentIndex = 0;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const displayMs = prefersReducedMotion ? 10000 : 6000;
+        const transitionMs = prefersReducedMotion ? 0 : 450;
+
+        const renderEvent = (event) => {
+          descriptionEl.textContent = event.description;
+          sizeEl.textContent = event.size;
+          buildingEl.innerHTML = `at <strong>${event.building}</strong>`;
+        };
+
+        const showNext = () => {
+          if (!prefersReducedMotion) {
+            rotator.classList.add('is-transitioning');
+          }
+
+          window.setTimeout(() => {
+            currentIndex = (currentIndex + 1) % HEADLINE_EVENTS.length;
+            renderEvent(HEADLINE_EVENTS[currentIndex]);
+            rotator.classList.remove('is-transitioning');
+          }, transitionMs);
+        };
+
+        renderEvent(HEADLINE_EVENTS[currentIndex]);
+        window.setInterval(showNext, displayMs);
+      }
+
+      /* Utilities */
+      function debounce(fn, ms){
+        let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(null,args), ms); };
+      }
+
+      // DOM init
+      if (document.readyState !== 'loading') {
+        buildRentsTable();
+        setupTableHover();
+        setupPanel();
+        setupMapUi();
+        setupMobileBrowserGuidance();
+        syncDesktopMode();
+        initLogos();
+        initHeadlineRotator();
+        initWelcomeBanner();
+      } else {
+        document.addEventListener('DOMContentLoaded', () => {
+          buildRentsTable();
+          setupTableHover();
+          setupPanel();
+          setupMapUi();
+          setupMobileBrowserGuidance();
+          syncDesktopMode();
+          initLogos();
+          initHeadlineRotator();
+          initWelcomeBanner();
+        });
+      }
+    </script>
+  </body>
+</html>
