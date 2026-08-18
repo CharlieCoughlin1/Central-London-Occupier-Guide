@@ -4,15 +4,17 @@
   "period": "Q1 2026 QTD",
   "heroImage": "../../assets/images/noho-fitzrovia-hero.png",
   "mapImage": "../../assets/images/noho-fitzrovia-map.png",
+  "mapBounds": [[-0.1456, 51.51455], [-0.12975, 51.526]],
+  "mapMaxBounds": [[-0.151, 51.511], [-0.124, 51.529]],
   "heroFacts": [
     { "label": "Office stock", "value": "11.7m sq ft", "target": 11.7, "decimals": 1, "suffix": "m sq ft" },
     { "label": "Availability rate", "value": "11.9%", "target": 11.9, "decimals": 1, "suffix": "%" },
     { "label": "Guiding Grade A rent", "value": "£118 psf", "target": 118, "decimals": 0, "prefix": "£", "suffix": " psf" }
   ],
   "overview": [
-    "Fitzrovia sits between Euston Road and Oxford Street. Developed from the Manor of Tottenham Court and urbanised in the 18th century, the district took its modern name from the Fitzroy Tavern in the late 1930s.",
-    "Today it combines offices, homes, retail, education and healthcare. The BT Tower, Charlotte Street and the British Museum are among the landmarks that define the area.",
-    "Its occupier base is led by media and creative businesses, professional services and technology. Major office occupiers include Boston Consulting Group, Meta, Estée Lauder Companies and Arup, while University College London and several hospitals reinforce the district's academic and healthcare presence."
+    "Fitzrovia is a vibrant district with a bohemian past reflected in its association with literary figures like Virginia Woolf and George Bernard Shaw. Nestled between Euston Road and Oxford Street, it evolved from the Manor of Tottenham Court and was urbanised in the 18th century. The area gained its name in the late 1930s, inspired by the Fitzroy Tavern.",
+    "Fitzrovia is now renowned for its eclectic mix of residential, business, retail, education, and healthcare facilities. Key landmarks and attractions include the iconic BT Tower, the bustling Charlotte Street with its array of restaurants and cafes, and the nearby British Museum. This blend of history, culture, and modernity makes Fitzrovia a dynamic and appealing area for both residents, visitors and businesses alike.",
+    "Today, Fitzrovia hosts a diverse range of businesses, from creative industries and media companies to tech startups. Fitzrovia is a global hub for media, advertising, and design companies, with notable occupiers including Sony, Facebook, MTV, and Lionsgate Films. The area is also well known for healthcare and academic establishments, home to University College London and several hospitals."
   ],
   "developments": {
     "tracked": 7,
@@ -27,8 +29,8 @@
         "rent": "£70+ psf",
         "image": "../../assets/images/development-princess-house.png",
         "imageAlt": "Princess House on Eastcastle Street",
-        "x": 72.35,
-        "y": 11.177
+        "address": "50 Eastcastle Street, W1W 8EJ",
+        "coordinates": [-0.1384777, 51.5164309]
       },
       {
         "id": "berners-wells",
@@ -38,8 +40,8 @@
         "rent": "£95+ psf",
         "image": "../../assets/images/development-berners-wells.png",
         "imageAlt": "Berners & Wells office building",
-        "x": 56.525,
-        "y": 16.638
+        "address": "60 Berners Street, W1T 3NP",
+        "coordinates": [-0.1369793, 51.5171045]
       },
       {
         "id": "the-ribbon",
@@ -49,8 +51,8 @@
         "rent": "£110–£150 psf",
         "image": "../../assets/images/development-the-ribbon.png",
         "imageAlt": "The Ribbon office development",
-        "x": 63.704,
-        "y": 19.881
+        "address": "80 Wells Street, W1T 3QN",
+        "coordinates": [-0.1371536, 51.5160011]
       },
       {
         "id": "the-fitzrovia",
@@ -60,8 +62,8 @@
         "rent": "£81–£99 psf",
         "image": "../../assets/images/development-the-fitzrovia.jpg",
         "imageAlt": "The Fitzrovia office building",
-        "x": 9.543,
-        "y": 31.314
+        "address": "247 Tottenham Court Road, W1T 7QX",
+        "coordinates": [-0.1318077, 51.518552]
       },
       {
         "id": "2-fitzroy-place",
@@ -71,8 +73,8 @@
         "rent": "£135 psf",
         "image": "../../assets/images/development-2-fitzroy-place.png",
         "imageAlt": "2 Fitzroy Place",
-        "x": 65.334,
-        "y": 32.338
+        "address": "Mortimer Street, W1T 3PW",
+        "coordinates": [-0.1378266, 51.5187422]
       },
       {
         "id": "80-charlotte-street",
@@ -82,8 +84,8 @@
         "rent": "£87.50–£180 psf",
         "image": "../../assets/images/development-80-charlotte-street.png",
         "imageAlt": "80 Charlotte Street office building",
-        "x": 54.894,
-        "y": 56.4
+        "address": "80 Charlotte Street, W1T 4QS",
+        "coordinates": [-0.1370112, 51.5209964]
       },
       {
         "id": "network-building",
@@ -93,8 +95,8 @@
         "rent": "£81–£99 psf",
         "image": "../../assets/images/development-network-building.png",
         "imageAlt": "Network Building on Howland Street",
-        "x": 27.326,
-        "y": 70.223
+        "address": "10 Howland Street, W1T 4AZ",
+        "coordinates": [-0.1364178, 51.5220286]
       }
     ]
   },
@@ -139,10 +141,10 @@
     { "sector": "Real Estate & Construction", "share": 8.0 }
   ],
   "notableOccupiers": [
-    { "name": "Boston Consulting Group", "building": "80 Charlotte Street", "floorSpace": 321000 },
-    { "name": "Meta", "building": "One Rathbone Square", "floorSpace": 242800 },
-    { "name": "Estée Lauder Companies", "building": "1 Fitzroy Place", "floorSpace": 150000 },
-    { "name": "Arup", "building": "8 Fitzroy Street", "floorSpace": 147900 }
+    { "name": "Boston Consulting Group", "logo": "../../assets/images/logos/Boston Consulting.png", "logoAlt": "BCG logo" },
+    { "name": "Meta", "logo": "../../assets/images/logos/Meta.jpg", "logoAlt": "Meta logo" },
+    { "name": "Estée Lauder Companies", "logo": "../../assets/images/logos/Estee Lauder.png", "logoAlt": "Estée Lauder Companies logo" },
+    { "name": "Arup", "logo": "../../assets/images/logos/Arup.png", "logoAlt": "Arup logo" }
   ],
   "marketStats": [
     { "label": "Availability rate", "value": "11.9%", "note": "Available office space as a share of stock" },
@@ -152,11 +154,11 @@
     { "label": "Under construction", "value": "221,740 sq ft", "note": "District-wide pipeline" }
   ],
   "stations": [
-    { "id": "tottenham-court-road", "name": "Tottenham Court Road", "lines": ["Central", "Northern", "Elizabeth"], "x": 3.754, "y": 2.388 },
-    { "id": "goodge-street", "name": "Goodge Street", "lines": ["Northern"], "x": 15.661, "y": 45.564 },
-    { "id": "warren-street", "name": "Warren Street", "lines": ["Northern", "Victoria"], "x": 34.422, "y": 96.586 },
-    { "id": "great-portland-street", "name": "Great Portland Street", "lines": ["Circle", "Hammersmith & City", "Metropolitan"], "x": 84.341, "y": 94.028 },
-    { "id": "oxford-circus", "name": "Oxford Circus", "lines": ["Bakerloo", "Central", "Victoria"], "x": 88.419, "y": 8.531 }
+    { "id": "tottenham-court-road", "name": "Tottenham Court Road", "lines": ["Central", "Northern", "Elizabeth"], "coordinates": [-0.130888, 51.516018] },
+    { "id": "goodge-street", "name": "Goodge Street", "lines": ["Northern"], "coordinates": [-0.134361, 51.520599] },
+    { "id": "warren-street", "name": "Warren Street", "lines": ["Northern", "Victoria"], "coordinates": [-0.138321, 51.524951] },
+    { "id": "great-portland-street", "name": "Great Portland Street", "lines": ["Circle", "Hammersmith & City", "Metropolitan"], "coordinates": [-0.144262, 51.52384] },
+    { "id": "oxford-circus", "name": "Oxford Circus", "lines": ["Bakerloo", "Central", "Victoria"], "coordinates": [-0.141903, 51.515224] }
   ],
-  "sources": "LSH Central London Office MASTER - updated.xlsx; Tenant composition.xlsx; Key office occupiers by submarket.xlsx; CL key office buildings.xlsx; current LSH / Infogram dashboard for mapped locations and imagery."
+  "sources": "LSH Central London Office MASTER - updated.xlsx; Tenant composition.xlsx; Key office occupiers by submarket.xlsx; CL key office buildings.xlsx; LSH district commentaries; TfL station coordinates; published building addresses."
 }

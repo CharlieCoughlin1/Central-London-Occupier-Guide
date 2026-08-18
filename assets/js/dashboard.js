@@ -7,8 +7,6 @@ const createElement = (tag, className, text) => {
   return element;
 };
 
-const formatSqFt = (value) => new Intl.NumberFormat("en-GB").format(value);
-
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const formatAnimatedNumber = (value, decimals, prefix, suffix) => {
@@ -96,14 +94,6 @@ const initialiseInViewAnimations = () => {
   animatedGroups.forEach((group) => observer.observe(group));
 };
 
-const getInitials = (name) => name
-  .split(/\s+/)
-  .filter(Boolean)
-  .slice(0, 3)
-  .map((word) => word[0])
-  .join("")
-  .toUpperCase();
-
 const renderHero = (data) => {
   document.querySelectorAll("[data-title]").forEach((element) => {
     element.textContent = data.title;
@@ -141,94 +131,110 @@ const lineClass = (line) => `line-${line.toLowerCase().replace(/&/g, "and").repl
 const mapLineLabel = (line) => line === "Hammersmith & City" ? "H&C" : line;
 
 let activeMapButton = null;
+let activeMapPopup = null;
+let districtMap = null;
 
 const closeMapPopup = (returnFocus = false) => {
-  const popup = document.getElementById("map-popup");
-  if (!popup || popup.hidden) return;
-  popup.hidden = true;
-  popup.replaceChildren();
-  if (activeMapButton) {
-    activeMapButton.setAttribute("aria-expanded", "false");
-    activeMapButton.classList.remove("is-active");
-    if (returnFocus) activeMapButton.focus();
-  }
+  const button = activeMapButton;
+  const popup = activeMapPopup;
   activeMapButton = null;
+  activeMapPopup = null;
+  if (popup) popup.remove();
+  if (button) {
+    button.setAttribute("aria-expanded", "false");
+    button.classList.remove("is-active");
+    if (returnFocus) button.focus();
+  }
 };
 
-const positionMapPopup = (button) => {
-  const map = document.getElementById("interactive-map");
-  const popup = document.getElementById("map-popup");
-  if (!map || !popup || popup.hidden) return;
+const buildMapPopup = (record, type) => {
+  const popup = createElement("article", `location-popup location-popup-${type}`);
+  popup.setAttribute("role", "dialog");
+  popup.setAttribute("aria-label", `${record.name} details`);
 
-  const mapRect = map.getBoundingClientRect();
-  const buttonRect = button.getBoundingClientRect();
-  const popupRect = popup.getBoundingClientRect();
-  const markerX = buttonRect.left + (buttonRect.width / 2) - mapRect.left;
-  const markerY = buttonRect.top + (buttonRect.height / 2) - mapRect.top;
-  const gutter = 12;
-  const left = Math.max(gutter, Math.min(markerX - (popupRect.width / 2), map.clientWidth - popupRect.width - gutter));
-  const preferredTop = markerY > map.clientHeight / 2
-    ? markerY - popupRect.height - 18
-    : markerY + 18;
-  const top = Math.max(gutter, Math.min(preferredTop, map.clientHeight - popupRect.height - gutter));
-  popup.style.left = `${left}px`;
-  popup.style.top = `${top}px`;
-  popup.style.visibility = "visible";
-};
-
-const openMapPopup = (record, type, button) => {
-  const popup = document.getElementById("map-popup");
-  if (!popup) return;
-
-  closeMapPopup();
-  activeMapButton = button;
-  button.classList.add("is-active");
-  button.setAttribute("aria-expanded", "true");
-  popup.className = `map-popup map-popup-${type}`;
-
-  const close = createElement("button", "map-popup-close", "×");
+  const close = createElement("button", "location-popup-close", "×");
   close.type = "button";
   close.setAttribute("aria-label", "Close map popup");
   close.addEventListener("click", () => closeMapPopup(true));
 
-  const copy = createElement("div", "map-popup-copy");
-  copy.appendChild(createElement("h3", "", record.name));
-
   if (type === "building") {
-    const availability = createElement("p");
-    availability.append(createElement("strong", "", "Availability: "), record.availability);
-    const rent = createElement("p");
-    rent.append(createElement("strong", "", "Rent: "), record.rent);
-    copy.append(availability, rent);
-
-    const image = createElement("img", "map-popup-image");
+    const image = createElement("img", "location-popup-image");
     image.src = record.image;
     image.alt = record.imageAlt;
-    popup.append(copy, image, close);
+
+    const body = createElement("div", "location-popup-body");
+    const status = createElement("span", "location-popup-status", record.status);
+    if (record.status.toLowerCase().includes("construction")) status.classList.add("is-construction");
+    body.append(status, createElement("h3", "", record.name), createElement("p", "location-popup-address", record.address));
+
+    const facts = createElement("dl", "location-popup-facts");
+    const addFact = (label, value) => {
+      const item = createElement("div");
+      item.append(createElement("dt", "", label), createElement("dd", "", value));
+      facts.appendChild(item);
+    };
+    addFact("Availability", record.availability);
+    addFact("Rent", record.rent);
+    body.appendChild(facts);
+    popup.append(image, body, close);
   } else {
+    const body = createElement("div", "location-popup-body");
+    body.append(createElement("span", "location-popup-kicker", "Tube & rail"), createElement("h3", "", record.name));
     const lines = createElement("div", "map-popup-lines");
     record.lines.forEach((line) => {
       lines.appendChild(createElement("span", `line-chip ${lineClass(line)}`, mapLineLabel(line)));
     });
-    copy.appendChild(lines);
-    popup.append(copy, close);
+    body.appendChild(lines);
+    popup.append(body, close);
   }
 
-  popup.hidden = false;
-  popup.style.visibility = "hidden";
-  requestAnimationFrame(() => positionMapPopup(button));
+  return popup;
 };
 
-const renderInteractiveMap = (buildings, stations) => {
-  const map = document.getElementById("interactive-map");
-  const markers = document.getElementById("map-markers");
-  if (!map || !markers) return;
+const openMapPopup = (record, type, button) => {
+  closeMapPopup();
+  activeMapButton = button;
+  button.classList.add("is-active");
+  button.setAttribute("aria-expanded", "true");
+
+  activeMapPopup = new window.maplibregl.Popup({
+    closeButton: false,
+    closeOnClick: false,
+    focusAfterOpen: false,
+    anchor: "bottom",
+    maxWidth: "390px",
+    offset: type === "building" ? 20 : 24,
+    className: `district-map-popup district-map-popup-${type}`,
+  })
+    .setLngLat(record.coordinates)
+    .setDOMContent(buildMapPopup(record, type))
+    .addTo(districtMap);
+};
+
+const renderInteractiveMap = (data) => {
+  const mapContainer = document.getElementById("live-map");
+  const mapShell = document.getElementById("interactive-map");
+  if (!mapContainer || !mapShell || !window.maplibregl) return;
+
+  districtMap = new window.maplibregl.Map({
+    container: mapContainer,
+    style: "https://tiles.openfreemap.org/styles/positron",
+    bounds: data.mapBounds,
+    fitBoundsOptions: { padding: 24, duration: 0 },
+    maxBounds: data.mapMaxBounds,
+    minZoom: 13.8,
+    maxZoom: 18.5,
+    attributionControl: true,
+  });
+  districtMap.scrollZoom.disable();
+  districtMap.dragRotate.disable();
+  districtMap.touchZoomRotate.disableRotation();
+  districtMap.addControl(new window.maplibregl.NavigationControl({ showCompass: false }), "top-right");
 
   const addMarker = (record, type) => {
+    const shell = createElement("div", "map-marker-shell");
     const button = createElement("button", `map-marker map-marker-${type}`);
     button.type = "button";
-    button.style.left = `${record.x}%`;
-    button.style.top = `${record.y}%`;
     button.setAttribute("aria-label", `Open details for ${record.name}`);
     button.setAttribute("aria-haspopup", "dialog");
     button.setAttribute("aria-expanded", "false");
@@ -244,25 +250,21 @@ const renderInteractiveMap = (buildings, stations) => {
 
     button.addEventListener("click", (event) => {
       event.stopPropagation();
-      if (activeMapButton === button) {
-        closeMapPopup(true);
-      } else {
-        openMapPopup(record, type, button);
-      }
+      if (activeMapButton === button) closeMapPopup(true);
+      else openMapPopup(record, type, button);
     });
-    markers.appendChild(button);
+    shell.appendChild(button);
+    new window.maplibregl.Marker({ element: shell, anchor: "center" })
+      .setLngLat(record.coordinates)
+      .addTo(districtMap);
   };
 
-  buildings.forEach((building) => addMarker(building, "building"));
-  stations.forEach((station) => addMarker(station, "station"));
-  map.addEventListener("click", (event) => {
-    if (!event.target.closest(".map-marker, .map-popup")) closeMapPopup();
-  });
-  map.addEventListener("keydown", (event) => {
+  data.developments.buildings.forEach((building) => addMarker(building, "building"));
+  data.stations.forEach((station) => addMarker(station, "station"));
+  districtMap.on("load", () => mapShell.classList.add("map-ready"));
+  districtMap.on("click", () => closeMapPopup());
+  mapShell.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeMapPopup(true);
-  });
-  window.addEventListener("resize", () => {
-    if (activeMapButton) positionMapPopup(activeMapButton);
   });
 };
 
@@ -279,17 +281,7 @@ const renderOverview = (data) => {
   construction.append(createElement("i", "status-dot"), `${data.developments.underConstruction} under construction / pre-let`);
   status.append(available, construction);
 
-  const list = document.getElementById("building-list");
-  data.developments.buildings.forEach((building) => {
-    const item = createElement("li");
-    item.append(
-      createElement("strong", "", building.name),
-      createElement("span", "", building.status),
-    );
-    list.appendChild(item);
-  });
-
-  renderInteractiveMap(data.developments.buildings, data.stations);
+  renderInteractiveMap(data);
 };
 
 const renderScores = (scores) => {
@@ -353,13 +345,13 @@ const renderOccupiers = (data) => {
   const occupiers = document.getElementById("occupier-list");
   data.notableOccupiers.forEach((occupier) => {
     const item = createElement("div", "occupier-item");
-    const mark = createElement("span", "occupier-mark", getInitials(occupier.name));
+    const mark = createElement("span", "occupier-mark");
+    const logo = createElement("img", "occupier-logo");
+    logo.src = occupier.logo;
+    logo.alt = occupier.logoAlt;
+    mark.appendChild(logo);
     const copy = createElement("div", "occupier-copy");
-    copy.append(
-      createElement("strong", "", occupier.name),
-      createElement("span", "", occupier.building),
-      createElement("small", "", `${formatSqFt(occupier.floorSpace)} sq ft`),
-    );
+    copy.appendChild(createElement("strong", "", occupier.name));
     item.append(mark, copy);
     occupiers.appendChild(item);
   });

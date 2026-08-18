@@ -12,7 +12,9 @@
     <meta name="twitter:card" content="summary_large_image" />
     <title>Noho / Fitzrovia | Central London Occupier Guide</title>
     <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/din-pro" />
+    <link rel="stylesheet" href="../../vendor/maplibre-gl/maplibre-gl.css" />
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <script src="../../vendor/maplibre-gl/maplibre-gl.js"></script>
     <script type="module" src="../../assets/js/dashboard.js"></script>
   </head>
   <body>
@@ -58,9 +60,9 @@
         <div class="overview-grid">
           <article class="development-card">
             <div class="development-map" id="interactive-map" aria-label="Interactive map of key office developments and stations in Noho and Fitzrovia">
-              <img data-map-image src="../../assets/images/noho-fitzrovia-map.png" alt="" aria-hidden="true" />
-              <div class="map-markers" id="map-markers"></div>
-              <div class="map-popup" id="map-popup" role="dialog" aria-modal="false" aria-live="polite" hidden></div>
+              <img class="map-fallback" data-map-image src="../../assets/images/noho-fitzrovia-map.png" alt="" aria-hidden="true" />
+              <div class="live-map" id="live-map" aria-hidden="true"></div>
+              <span class="map-mode">Live street map</span>
               <div class="map-legend" aria-label="Development status legend">
                 <span><i class="legend-dot legend-construction"></i>Under construction</span>
                 <span><i class="legend-dot legend-available"></i>Available</span>
@@ -72,10 +74,6 @@
                 <span>mapped office developments</span>
               </div>
               <div class="status-row" id="development-status"></div>
-              <details>
-                <summary>View tracked buildings</summary>
-                <ul class="building-list" id="building-list"></ul>
-              </details>
             </div>
           </article>
 
@@ -94,6 +92,43 @@
             <h2 id="scores-title">Scores at a glance</h2>
           </div>
         </div>
+        <details class="score-methodology">
+          <summary>
+            <span>How the scores are calculated</span>
+            <span class="methodology-toggle" aria-hidden="true"></span>
+          </summary>
+          <div class="methodology-grid">
+            <article>
+              <h3>Connectivity</h3>
+              <p>Measures public transport accessibility within the submarket:</p>
+              <ul>
+                <li>People reachable within 50 minutes' public transport travel time from the main station</li>
+                <li>Number of rail/Underground stations</li>
+                <li>Average PTAL score</li>
+              </ul>
+            </article>
+            <article>
+              <h3>Amenity</h3>
+              <p>Captures depth of everyday amenities:</p>
+              <ul>
+                <li>Total 4–5★ hotel rooms</li>
+                <li>Number of gyms</li>
+                <li>Total Food &amp; Beverage outlets</li>
+                <li>Total garden-square acreage</li>
+              </ul>
+            </article>
+            <article>
+              <h3>Culture</h3>
+              <p>Reflects cultural vibrancy:</p>
+              <ul>
+                <li>Number of major attractions</li>
+                <li>Number of theatres</li>
+                <li>Number of nightclubs</li>
+                <li>Number of pubs</li>
+              </ul>
+            </article>
+          </div>
+        </details>
         <div class="score-grid" id="score-grid"></div>
       </section>
 
