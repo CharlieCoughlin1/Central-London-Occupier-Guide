@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Noho and Fitzrovia office market dashboard for Lambert Smith Hampton's Central London Occupier Guide." />
+    <meta name="theme-color" content="#3d3834" />
+    <meta property="og:title" content="Noho / Fitzrovia | Central London Occupier Guide" />
+    <meta property="og:description" content="Office market, occupier, amenity and transport data for Noho and Fitzrovia." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://charliecoughlin1.github.io/Central-London-Occupier-Guide/assets/images/og-noho-fitzrovia.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>Noho / Fitzrovia | Central London Occupier Guide</title>
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/din-pro" />
+    <link rel="stylesheet" href="../../assets/css/dashboard.css" />
+    <script type="module" src="../../assets/js/dashboard.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to dashboard content</a>
+
+    <header class="dashboard-header">
+      <a class="guide-link" href="../../" aria-label="Back to all Central London submarkets">
+        <span class="guide-mark" aria-hidden="true"></span>
+        <span>Central London Occupier Guide</span>
+      </a>
+      <span class="header-context" data-title>Noho / Fitzrovia</span>
+    </header>
+
+    <main id="main-content" aria-busy="true">
+      <section class="hero" aria-labelledby="page-title">
+        <img class="hero-image" data-hero-image src="../../assets/images/noho-fitzrovia-hero.png" alt="Fitzrovia skyline with the BT Tower" />
+        <div class="hero-shade" aria-hidden="true"></div>
+        <div class="hero-content">
+          <a class="hero-back" href="../../">← All submarkets</a>
+          <p class="eyebrow">Central London office submarket</p>
+          <h1 id="page-title" data-title>Noho / Fitzrovia</h1>
+          <div class="hero-facts" id="hero-facts" aria-label="Headline market facts"></div>
+        </div>
+      </section>
+
+      <nav class="section-nav" aria-label="Dashboard sections">
+        <a href="#overview">Overview</a>
+        <a href="#scores">Location scores</a>
+        <a href="#occupiers">Occupiers</a>
+        <a href="#market">Market data</a>
+        <a href="#transport">Tube & rail</a>
+      </nav>
+
+      <section class="page-section" id="overview" aria-labelledby="overview-title">
+        <div class="section-heading">
+          <p class="section-index">01</p>
+          <div>
+            <p class="eyebrow">District profile</p>
+            <h2 id="overview-title">Developments & overview</h2>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="development-card">
+            <div class="development-map" id="interactive-map" aria-label="Interactive map of key office developments and stations in Noho and Fitzrovia">
+              <img data-map-image src="../../assets/images/noho-fitzrovia-map.png" alt="" aria-hidden="true" />
+              <div class="map-markers" id="map-markers"></div>
+              <div class="map-popup" id="map-popup" role="dialog" aria-modal="false" aria-live="polite" hidden></div>
+              <div class="map-legend" aria-label="Development status legend">
+                <span><i class="legend-dot legend-construction"></i>Under construction</span>
+                <span><i class="legend-dot legend-available"></i>Available</span>
+              </div>
+            </div>
+            <div class="development-footer">
+              <div class="development-summary" aria-label="Mapped office developments">
+                <strong id="development-count">7</strong>
+                <span>mapped office developments</span>
+              </div>
+              <div class="status-row" id="development-status"></div>
+              <details>
+                <summary>View tracked buildings</summary>
+                <ul class="building-list" id="building-list"></ul>
+              </details>
+            </div>
+          </article>
+
+          <article class="overview-copy card">
+            <p class="panel-label">District overview</p>
+            <div id="overview-copy"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="page-section score-section" id="scores" aria-labelledby="scores-title">
+        <div class="section-heading light-heading">
+          <p class="section-index">02</p>
+          <div>
+            <p class="eyebrow">Location performance</p>
+            <h2 id="scores-title">Scores at a glance</h2>
+          </div>
+        </div>
+        <div class="score-grid" id="score-grid"></div>
+      </section>
+
+      <section class="page-section" id="occupiers" aria-labelledby="occupiers-title">
+        <div class="section-heading">
+          <p class="section-index">03</p>
+          <div>
+            <p class="eyebrow">Occupied floorspace</p>
+            <h2 id="occupiers-title">Occupier composition</h2>
+          </div>
+        </div>
+
+        <div class="occupier-grid">
+          <article class="composition-card card">
+            <div class="panel-heading-row">
+              <p class="panel-label">Top sectors by floorspace</p>
+              <span>Noho / Fitzrovia</span>
+            </div>
+            <div class="sector-bars" id="sector-bars"></div>
+          </article>
+
+          <article class="notable-card card">
+            <p class="panel-label">Notable occupiers</p>
+            <div class="occupier-list" id="occupier-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <div class="market-transport-grid">
+        <section class="page-section compact-section" id="market" aria-labelledby="market-title">
+          <div class="section-heading compact-heading">
+            <p class="section-index">04</p>
+            <div>
+              <p class="eyebrow">Office market</p>
+              <h2 id="market-title">Stats at a glance</h2>
+            </div>
+          </div>
+          <article class="card market-card">
+            <div class="market-period">Market data: <strong data-period>Q1 2026 QTD</strong></div>
+            <div class="market-stats" id="market-stats"></div>
+          </article>
+        </section>
+
+        <section class="page-section compact-section" id="transport" aria-labelledby="transport-title">
+          <div class="section-heading compact-heading">
+            <p class="section-index">05</p>
+            <div>
+              <p class="eyebrow">Connections</p>
+              <h2 id="transport-title">Tube & rail</h2>
+            </div>
+          </div>
+          <article class="card transport-card">
+            <div class="station-list" id="station-list"></div>
+          </article>
+        </section>
+      </div>
+
+      <noscript>
+        <p class="data-error">This dashboard needs JavaScript enabled to load its market data.</p>
+      </noscript>
+      <p class="data-error" id="data-error" hidden>Dashboard data could not be loaded. Please return to the submarket map and try again.</p>
+    </main>
+
+    <footer class="dashboard-footer">
+      <div>
+        <a href="../../">Central London Occupier Guide</a>
+        <p>Lambert Smith Hampton</p>
+      </div>
+      <div class="source-note">
+        <p>Data period: <strong data-period>Q1 2026 QTD</strong></p>
+        <p id="source-note">Source: LSH market and occupier datasets.</p>
+      </div>
+    </footer>
+  </body>
+</html>
