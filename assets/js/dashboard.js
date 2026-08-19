@@ -1,3 +1,5 @@
+import { downloadDashboardPdf } from "./pdf-export.js";
+
 const dataUrl = new URL("../../data/submarkets/noho-fitzrovia.json", import.meta.url);
 
 const createElement = (tag, className, text) => {
@@ -103,9 +105,7 @@ const renderHero = (data) => {
   });
 
   const heroImage = document.querySelector("[data-hero-image]");
-  const mapImage = document.querySelector("[data-map-image]");
   if (heroImage) heroImage.src = data.heroImage;
-  if (mapImage) mapImage.src = data.mapImage;
 
   const facts = document.getElementById("hero-facts");
   data.heroFacts.forEach((fact) => {
@@ -220,7 +220,7 @@ const renderInteractiveMap = (data) => {
     container: mapContainer,
     style: "https://tiles.openfreemap.org/styles/positron",
     bounds: data.mapBounds,
-    fitBoundsOptions: { padding: 24, duration: 0 },
+    fitBoundsOptions: { padding: 34, duration: 0 },
     maxBounds: data.mapMaxBounds,
     minZoom: 13.8,
     maxZoom: 18.5,
@@ -261,7 +261,32 @@ const renderInteractiveMap = (data) => {
 
   data.developments.buildings.forEach((building) => addMarker(building, "building"));
   data.stations.forEach((station) => addMarker(station, "station"));
-  districtMap.on("load", () => mapShell.classList.add("map-ready"));
+  districtMap.on("load", () => {
+    districtMap.addSource("district-boundary", {
+      type: "geojson",
+      data: data.districtBoundary,
+    });
+    districtMap.addLayer({
+      id: "district-boundary-fill",
+      type: "fill",
+      source: "district-boundary",
+      paint: {
+        "fill-color": "#cc2030",
+        "fill-opacity": 0.075,
+      },
+    });
+    districtMap.addLayer({
+      id: "district-boundary-outline",
+      type: "line",
+      source: "district-boundary",
+      paint: {
+        "line-color": "#b51e2d",
+        "line-width": ["interpolate", ["linear"], ["zoom"], 13.8, 2.4, 17, 4],
+        "line-opacity": 0.95,
+      },
+    });
+    mapShell.classList.add("map-ready");
+  });
   districtMap.on("click", () => closeMapPopup());
   mapShell.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeMapPopup(true);
@@ -339,7 +364,7 @@ const renderOccupiers = (data) => {
     bars.appendChild(row);
   });
   const scale = createElement("div", "bar-scale");
-  scale.append(createElement("span", "", "0"), createElement("span", "", "25% of occupied floorspace"));
+  scale.append(createElement("span", "", "0%"), createElement("span", "", "25% of occupied floorspace"));
   bars.appendChild(scale);
 
   const occupiers = document.getElementById("occupier-list");
@@ -385,6 +410,33 @@ const renderStations = (stations) => {
   });
 };
 
+const initialisePdfDownload = (data) => {
+  const button = document.getElementById("download-pdf");
+  const status = document.getElementById("pdf-download-status");
+  if (!button || !status) return;
+
+  button.disabled = false;
+  button.addEventListener("click", async () => {
+    const originalLabel = button.innerHTML;
+    button.disabled = true;
+    button.classList.add("is-busy");
+    button.textContent = "Preparing PDF…";
+    status.textContent = "Preparing the one-page client PDF.";
+
+    try {
+      await downloadDashboardPdf(data);
+      status.textContent = "PDF downloaded.";
+    } catch (error) {
+      status.textContent = "The PDF could not be created. Please try again.";
+      console.error(error);
+    } finally {
+      button.disabled = false;
+      button.classList.remove("is-busy");
+      button.innerHTML = originalLabel;
+    }
+  });
+};
+
 const initialise = async () => {
   try {
     const response = await fetch(dataUrl);
@@ -397,6 +449,7 @@ const initialise = async () => {
     renderOccupiers(data);
     renderMarket(data.marketStats);
     renderStations(data.stations);
+    initialisePdfDownload(data);
     initialiseInViewAnimations();
     document.getElementById("source-note").textContent = `Sources: ${data.sources}`;
     document.getElementById("main-content").setAttribute("aria-busy", "false");
@@ -409,3 +462,4 @@ const initialise = async () => {
 };
 
 initialise();
+

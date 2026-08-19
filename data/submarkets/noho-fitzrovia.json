@@ -4,10 +4,48 @@
   "period": "Q1 2026 QTD",
   "heroImage": "../../assets/images/noho-fitzrovia-hero.png",
   "mapImage": "../../assets/images/noho-fitzrovia-map.png",
-  "mapBounds": [[-0.1456, 51.51455], [-0.12975, 51.526]],
-  "mapMaxBounds": [[-0.151, 51.511], [-0.124, 51.529]],
+  "mapBounds": [[-0.14635, 51.51495], [-0.12995, 51.5253]],
+  "mapMaxBounds": [[-0.153, 51.5105], [-0.1235, 51.5305]],
+  "districtBoundary": {
+    "type": "Feature",
+    "properties": { "name": "Noho / Fitzrovia" },
+    "geometry": {
+      "type": "Polygon",
+      "coordinates": [[
+        [-0.141966, 51.5153055],
+        [-0.1406963, 51.5154939],
+        [-0.1348272, 51.5160688],
+        [-0.1313028, 51.5163907],
+        [-0.1303693, 51.5164151],
+        [-0.1304262, 51.5165947],
+        [-0.1308641, 51.5171798],
+        [-0.1348374, 51.5211042],
+        [-0.1365798, 51.5229348],
+        [-0.1375228, 51.5241091],
+        [-0.137861, 51.5246503],
+        [-0.1378453, 51.5247447],
+        [-0.1379775, 51.5249622],
+        [-0.1393813, 51.52457],
+        [-0.1426718, 51.5239137],
+        [-0.1433039, 51.5238948],
+        [-0.1445079, 51.5240049],
+        [-0.1451711, 51.5239114],
+        [-0.1451491, 51.5236107],
+        [-0.1452993, 51.5233146],
+        [-0.1457073, 51.5230261],
+        [-0.1460905, 51.5229071],
+        [-0.1440775, 51.5183781],
+        [-0.1437985, 51.5181185],
+        [-0.1431612, 51.517831],
+        [-0.1430201, 51.5177112],
+        [-0.1422569, 51.5160357],
+        [-0.1421651, 51.5159662],
+        [-0.141966, 51.5153055]
+      ]]
+    }
+  },
   "heroFacts": [
-    { "label": "Office stock", "value": "11.7m sq ft", "target": 11.7, "decimals": 1, "suffix": "m sq ft" },
+    { "label": "Office stock", "value": "c. 12m sq ft", "target": 12, "decimals": 0, "prefix": "c. ", "suffix": "m sq ft" },
     { "label": "Availability rate", "value": "11.9%", "target": 11.9, "decimals": 1, "suffix": "%" },
     { "label": "Guiding Grade A rent", "value": "£118 psf", "target": 118, "decimals": 0, "prefix": "£", "suffix": " psf" }
   ],
@@ -148,10 +186,10 @@
   ],
   "marketStats": [
     { "label": "Availability rate", "value": "11.9%", "note": "Available office space as a share of stock" },
-    { "label": "Total office stock", "value": "11.7m sq ft", "note": "Across 721 office buildings" },
+    { "label": "Total office stock", "value": "c. 12m sq ft", "note": "Across 721 office buildings" },
     { "label": "Guiding Grade A rent", "value": "£118 psf", "note": "Best-in-class space" },
     { "label": "Guiding Grade B rent", "value": "£68 psf", "note": "Good quality space" },
-    { "label": "Under construction", "value": "221,740 sq ft", "note": "District-wide pipeline" }
+    { "label": "Under construction", "value": "220,000+ sq ft", "note": "District-wide pipeline" }
   ],
   "stations": [
     { "id": "tottenham-court-road", "name": "Tottenham Court Road", "lines": ["Central", "Northern", "Elizabeth"], "coordinates": [-0.130888, 51.516018] },
@@ -162,3 +200,4 @@
   ],
   "sources": "LSH Central London Office MASTER - updated.xlsx; Tenant composition.xlsx; Key office occupiers by submarket.xlsx; CL key office buildings.xlsx; LSH district commentaries; TfL station coordinates; published building addresses."
 }
+

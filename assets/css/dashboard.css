@@ -108,7 +108,7 @@ img {
 }
 
 main {
-  padding: clamp(18px, 3vw, 34px) 0 96px;
+  padding: clamp(12px, 2.2vw, 26px) 0 96px;
 }
 
 .hero {
@@ -236,15 +236,25 @@ main {
   line-height: 1.2;
 }
 
-.section-nav {
+.section-toolbar {
   position: sticky;
-  top: 64px;
+  top: 0;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  margin: 20px auto 0;
+}
+
+.section-nav {
   display: flex;
   justify-content: center;
   gap: 6px;
   max-width: max-content;
-  margin: 20px auto 0;
+  margin: 0;
   padding: 7px;
   overflow-x: auto;
   scrollbar-width: none;
@@ -275,6 +285,47 @@ main {
 .section-nav a:focus-visible {
   background: var(--graphite);
   color: #fff;
+}
+
+.download-pdf-button {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.download-pdf-button span {
+  font-size: 1rem;
+  line-height: 0.8;
+}
+
+.download-pdf-button:hover,
+.download-pdf-button:focus-visible {
+  background: var(--brand-dark);
+}
+
+.download-pdf-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.pdf-download-status {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .page-section,
@@ -317,6 +368,7 @@ main {
 .overview-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+  align-items: start;
   gap: 24px;
 }
 
@@ -330,13 +382,12 @@ main {
 
 .development-map {
   position: relative;
-  aspect-ratio: 618 / 591;
+  aspect-ratio: 1;
   overflow: hidden;
-  background: #fff;
+  background: #eceae7;
   isolation: isolate;
 }
 
-.map-fallback,
 .live-map {
   position: absolute;
   inset: 0;
@@ -345,14 +396,10 @@ main {
   transition: opacity 280ms ease;
 }
 
-.map-fallback {
-  object-fit: contain;
-}
-
 .live-map {
   z-index: 1;
   overflow: hidden;
-  background: #fff;
+  background: #eceae7;
   opacity: 0;
 }
 
@@ -360,13 +407,37 @@ main {
   opacity: 1;
 }
 
-.map-ready .map-fallback {
+.map-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 11px;
+  color: #77726d;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: opacity 180ms ease;
+}
+
+.map-loading span {
+  width: 24px;
+  height: 24px;
+  border: 3px solid rgba(204, 32, 48, 0.2);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: map-loading-spin 800ms linear infinite;
+}
+
+.map-ready .map-loading {
   opacity: 0;
 }
 
-.live-map .maplibregl-canvas {
-  -webkit-mask: url("../images/noho-fitzrovia-boundary-mask.png") center / 100% 100% no-repeat;
-  mask: url("../images/noho-fitzrovia-boundary-mask.png") center / 100% 100% no-repeat;
+@keyframes map-loading-spin {
+  to { transform: rotate(360deg); }
 }
 
 .live-map .maplibregl-ctrl-top-right {
@@ -508,6 +579,14 @@ main {
 
 .legend-construction {
   background: var(--cyan);
+}
+
+.legend-boundary {
+  width: 15px;
+  height: 10px;
+  border: 2px solid var(--brand);
+  border-radius: 3px;
+  background: rgba(204, 32, 48, 0.1);
 }
 
 .district-map-popup .maplibregl-popup-content {
@@ -676,8 +755,8 @@ main {
   display: flex;
   align-items: center;
   gap: 13px;
-  margin-bottom: 18px;
-  padding-bottom: 17px;
+  margin-bottom: 14px;
+  padding-bottom: 13px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -698,12 +777,12 @@ main {
 }
 
 .development-footer {
-  padding: 20px 24px 24px;
+  padding: 17px 22px 20px;
 }
 
 .status-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
 }
 
@@ -711,11 +790,12 @@ main {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 6px 10px;
+  padding: 6px 9px;
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 999px;
   color: rgba(255, 255, 255, 0.82);
-  font-size: 0.76rem;
+  font-size: 0.68rem;
+  white-space: nowrap;
 }
 
 .status-dot {
@@ -730,21 +810,22 @@ main {
 }
 
 .overview-copy {
-  padding: clamp(30px, 5vw, 58px);
+  padding: clamp(28px, 4vw, 48px);
 }
 
 .overview-copy .panel-label {
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .overview-copy p:not(.panel-label) {
   margin: 0;
   color: #46484c;
-  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  font-size: clamp(0.92rem, 1.15vw, 1rem);
+  line-height: 1.48;
 }
 
 .overview-copy #overview-copy p + p {
-  margin-top: 22px;
+  margin-top: 18px;
 }
 
 .score-section {
@@ -1126,7 +1207,7 @@ main {
   overflow: hidden;
   padding: 8px;
   border-radius: 10px;
-  background: #f7f6f4;
+  background: rgb(242, 242, 242);
 }
 
 .occupier-logo {
@@ -1441,11 +1522,28 @@ main {
   }
 
   .section-nav {
-    top: 56px;
     justify-content: flex-start;
-    width: calc(100% - 24px);
+    min-width: 0;
+    width: auto;
     max-width: none;
     border-radius: 14px;
+  }
+
+  .section-toolbar {
+    justify-content: stretch;
+    width: calc(100% - 24px);
+    max-width: none;
+  }
+
+  .section-toolbar .section-nav {
+    flex: 1 1 auto;
+  }
+
+  .section-toolbar .download-pdf-button {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding-inline: 16px;
+    box-shadow: 0 12px 30px rgba(41, 39, 37, 0.24);
   }
 
   .page-section,
@@ -1467,8 +1565,13 @@ main {
   }
 
   .development-map {
+    aspect-ratio: 1;
     min-height: 0;
     padding: 0;
+  }
+
+  .status-row {
+    flex-wrap: wrap;
   }
 
   .map-legend {
@@ -1583,7 +1686,7 @@ main {
 
 @media print {
   .dashboard-header,
-  .section-nav,
+  .section-toolbar,
   .hero-back {
     display: none;
   }
@@ -1604,3 +1707,4 @@ main {
     break-inside: avoid;
   }
 }
+

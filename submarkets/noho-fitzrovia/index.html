@@ -20,14 +20,6 @@
   <body>
     <a class="skip-link" href="#main-content">Skip to dashboard content</a>
 
-    <header class="dashboard-header">
-      <a class="guide-link" href="../../" aria-label="Back to all Central London submarkets">
-        <span class="guide-mark" aria-hidden="true"></span>
-        <span>Central London Occupier Guide</span>
-      </a>
-      <span class="header-context" data-title>Noho / Fitzrovia</span>
-    </header>
-
     <main id="main-content" aria-busy="true">
       <section class="hero" aria-labelledby="page-title">
         <img class="hero-image" data-hero-image src="../../assets/images/noho-fitzrovia-hero.png" alt="Fitzrovia skyline with the BT Tower" />
@@ -40,13 +32,19 @@
         </div>
       </section>
 
-      <nav class="section-nav" aria-label="Dashboard sections">
-        <a href="#overview">Overview</a>
-        <a href="#scores">Location scores</a>
-        <a href="#occupiers">Occupiers</a>
-        <a href="#market">Market data</a>
-        <a href="#transport">Tube & rail</a>
-      </nav>
+      <div class="section-toolbar">
+        <nav class="section-nav" aria-label="Dashboard sections">
+          <a href="#overview">Overview</a>
+          <a href="#scores">Location Scores</a>
+          <a href="#occupiers">Occupier Composition</a>
+          <a href="#market">Market Data</a>
+        </nav>
+        <button class="download-pdf-button" id="download-pdf" type="button" disabled>
+          <span aria-hidden="true">↓</span>
+          Download PDF
+        </button>
+      </div>
+      <p class="pdf-download-status" id="pdf-download-status" role="status" aria-live="polite"></p>
 
       <section class="page-section" id="overview" aria-labelledby="overview-title">
         <div class="section-heading">
@@ -60,12 +58,13 @@
         <div class="overview-grid">
           <article class="development-card">
             <div class="development-map" id="interactive-map" aria-label="Interactive map of key office developments and stations in Noho and Fitzrovia">
-              <img class="map-fallback" data-map-image src="../../assets/images/noho-fitzrovia-map.png" alt="" aria-hidden="true" />
-              <div class="live-map" id="live-map" aria-hidden="true"></div>
-              <span class="map-mode">Live street map</span>
+              <div class="live-map" id="live-map"></div>
+              <div class="map-loading" aria-hidden="true"><span></span>Loading live map</div>
+              <span class="map-mode">Noho / Fitzrovia boundary</span>
               <div class="map-legend" aria-label="Development status legend">
                 <span><i class="legend-dot legend-construction"></i>Under construction</span>
                 <span><i class="legend-dot legend-available"></i>Available</span>
+                <span><i class="legend-boundary"></i>Submarket boundary</span>
               </div>
             </div>
             <div class="development-footer">
@@ -204,3 +203,4 @@
     </footer>
   </body>
 </html>
+
